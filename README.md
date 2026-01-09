@@ -1,10 +1,10 @@
 # FluxPay Dashboard
 
-[![CI](https://github.com/YOUR_USERNAME/fluxpay-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/YOUR_USERNAME/fluxpay-dashboard/actions/workflows/ci.yml)
-[![CodeQL](https://github.com/YOUR_USERNAME/fluxpay-dashboard/actions/workflows/codeql.yml/badge.svg)](https://github.com/YOUR_USERNAME/fluxpay-dashboard/actions/workflows/codeql.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=YOUR_USERNAME_fluxpay-dashboard&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=YOUR_USERNAME_fluxpay-dashboard)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=YOUR_USERNAME_fluxpay-dashboard&metric=coverage)](https://sonarcloud.io/summary/new_code?id=YOUR_USERNAME_fluxpay-dashboard)
-[![codecov](https://codecov.io/gh/YOUR_USERNAME/fluxpay-dashboard/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/fluxpay-dashboard)
+[![CI](https://github.com/serhatsoysal/fluxpay-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/serhatsoysal/fluxpay-dashboard/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/serhatsoysal/fluxpay-dashboard/actions/workflows/codeql.yml/badge.svg)](https://github.com/serhatsoysal/fluxpay-dashboard/actions/workflows/codeql.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=serhatsoysal_fluxpay-dashboard&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=serhatsoysal_fluxpay-dashboard)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=serhatsoysal_fluxpay-dashboard&metric=coverage)](https://sonarcloud.io/summary/new_code?id=serhatsoysal_fluxpay-dashboard)
+[![codecov](https://codecov.io/gh/serhatsoysal/fluxpay-dashboard/branch/development/graph/badge.svg)](https://codecov.io/gh/serhatsoysal/fluxpay-dashboard)
 ![React](https://img.shields.io/badge/React-18.2-blue?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue?logo=typescript)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

@@ -19,13 +19,13 @@ By participating in this project, you agree to maintain a respectful and inclusi
 1. Fork the repository on GitHub
 2. Clone your fork locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/fluxpay-dashboard.git
+   git clone https://github.com/serhatsoysal/fluxpay-dashboard.git
    cd fluxpay-dashboard
    ```
 
 3. Add the upstream repository:
    ```bash
-   git remote add upstream https://github.com/ORIGINAL_OWNER/fluxpay-dashboard.git
+   git remote add upstream https://github.com/serhatsoysal/fluxpay-dashboard.git
    ```
 
 4. Install dependencies:
@@ -243,8 +243,8 @@ Use the [Feature Request template](.github/ISSUE_TEMPLATE/feature_request.yml) a
 
 ## Getting Help
 
-- **Questions:** Open a [GitHub Discussion](https://github.com/YOUR_USERNAME/fluxpay-dashboard/discussions)
-- **Bugs:** Open an [Issue](https://github.com/YOUR_USERNAME/fluxpay-dashboard/issues)
+- **Questions:** Open a [GitHub Discussion](https://github.com/serhatsoysal/fluxpay-dashboard/discussions)
+- **Bugs:** Open an [Issue](https://github.com/serhatsoysal/fluxpay-dashboard/issues)
 - **Security:** See [SECURITY.md](SECURITY.md)
 
 ## License
