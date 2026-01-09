@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Toast, ToastClose, ToastDescription, ToastProvider, ToastTitle, ToastViewport, ToastAction } from './toast';
 import { useToast } from './use-toast';
 
-const getToastIcon = (variant?: string) => {
+const getToastIcon = (variant?: string | null) => {
     switch (variant) {
         case 'success':
             return <span className="material-symbols-outlined text-emerald-500 text-[24px]">check_circle</span>;

@@ -1,7 +1,6 @@
 import { apiClient } from '@/shared/api/apiClient';
 import { API_ROUTES } from '@/shared/constants/apiEndpoints';
 import { LoginCredentials, RegisterCredentials, LoginResponse, RefreshTokenRequest, RefreshTokenResponse, Session } from '../types/auth.types';
-import { generateDeviceFingerprint } from '../utils/deviceFingerprint';
 
 export const authApi = {
     login: async (credentials: LoginCredentials): Promise<LoginResponse> => {

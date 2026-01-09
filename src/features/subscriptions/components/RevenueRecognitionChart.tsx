@@ -31,7 +31,6 @@ export const RevenueRecognitionChart: FC = () => {
             <div className="flex items-end h-32 gap-4">
                 {revenueData.map((item, index) => {
                     const totalHeight = (item.total / maxValue) * 100;
-                    const deferredHeight = (item.deferred / maxValue) * 100;
                     const isActive = index === 2;
                     const isHovered = hoveredIndex === index;
 

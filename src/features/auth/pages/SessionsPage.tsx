@@ -37,7 +37,7 @@ export const SessionsPage: FC = () => {
             toast({
                 variant: 'success',
                 title: 'Success',
-                description: 'Device logged out successfully',
+                description: `Device ${sessionId.substring(0, 8)}... logged out successfully`,
             });
             loadSessions();
         } catch (error) {
