@@ -1,0 +1,48 @@
+export const API_ROUTES = {
+    AUTH: {
+        LOGIN: '/auth/login',
+        REFRESH: '/auth/refresh',
+        LOGOUT: '/auth/logout',
+        LOGOUT_ALL: '/auth/logout-all',
+        SESSIONS: '/auth/sessions',
+    },
+    TENANTS: {
+        REGISTER: '/tenants/register',
+        GET: (id: string) => `/tenants/${id}`,
+        UPDATE: (id: string) => `/tenants/${id}`,
+    },
+    PRODUCTS: {
+        BASE: '/products',
+        CREATE: '/products',
+        LIST: '/products',
+        GET: (id: string) => `/products/${id}`,
+        UPDATE: (id: string) => `/products/${id}`,
+        DELETE: (id: string) => `/products/${id}`,
+        CREATE_PRICE: (productId: string) => `/products/${productId}/prices`,
+        LIST_PRICES: (productId: string) => `/products/${productId}/prices`,
+    },
+    SUBSCRIPTIONS: {
+        BASE: '/subscriptions',
+        CREATE: '/subscriptions',
+        GET: (id: string) => `/subscriptions/${id}`,
+        ITEMS: (id: string) => `/subscriptions/${id}/items`,
+        CANCEL: (id: string) => `/subscriptions/${id}/cancel`,
+        PAUSE: (id: string) => `/subscriptions/${id}/pause`,
+        RESUME: (id: string) => `/subscriptions/${id}/resume`,
+    },
+    INVOICES: {
+        GET: (id: string) => `/invoices/${id}`,
+        ITEMS: (id: string) => `/invoices/${id}/items`,
+        CUSTOMER: (customerId: string) => `/invoices/customer/${customerId}`,
+        FINALIZE: (id: string) => `/invoices/${id}/finalize`,
+        VOID: (id: string) => `/invoices/${id}/void`,
+    },
+    NOTIFICATIONS: {
+        BASE: '/notifications',
+        LIST: '/notifications',
+        GET: (id: string) => `/notifications/${id}`,
+        MARK_AS_READ: (id: string) => `/notifications/${id}/read`,
+        MARK_ALL_AS_READ: '/notifications/read-all',
+        COUNT: '/notifications/unread-count',
+    },
+};

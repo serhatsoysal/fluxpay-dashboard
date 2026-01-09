@@ -1,0 +1,17 @@
+export const ROUTES = {
+    HOME: '/',
+    LOGIN: '/login',
+    REGISTER: '/register',
+    DASHBOARD: '/dashboard',
+    SUBSCRIPTIONS: '/subscriptions',
+    SUBSCRIPTION_DETAIL: '/subscriptions/:id',
+    CUSTOMERS: '/customers',
+    CUSTOMER_DETAIL: '/customers/:id',
+    INVOICES: '/invoices',
+    INVOICE_DETAIL: '/invoices/:id',
+    PAYMENTS: '/payments',
+    PRODUCTS: '/products',
+    WEBHOOKS: '/webhooks',
+    SETTINGS: '/settings',
+    SESSIONS: '/sessions',
+};

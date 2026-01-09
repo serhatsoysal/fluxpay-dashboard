@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Testing
+coverage/
+*.test.js.snap
+.vitest/
+
+# Production
+build/
+dist/
+out/
+.next/
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Documentation (Private)
+document/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+*.suo
+*.ntvs
+*.njsproj
+*.sln
+*.sw?
+*.tsbuildinfo
+
+# OS Generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Framework specific
+.server/
+.vercel/
+.cache/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
