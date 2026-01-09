@@ -23,7 +23,7 @@ Report security vulnerabilities using one of these methods:
 
 #### Option A: GitHub Security Advisories (Preferred)
 
-1. Go to the [Security Advisories page](https://github.com/YOUR_USERNAME/fluxpay-dashboard/security/advisories)
+1. Go to the [Security Advisories page](https://github.com/serhatsoysal/fluxpay-dashboard/security/advisories)
 2. Click "New draft security advisory"
 3. Fill in the details of the vulnerability
 4. Submit the advisory

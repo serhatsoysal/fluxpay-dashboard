@@ -1,9 +1,9 @@
 blank_issues_enabled: true
 contact_links:
   - name: Question or Discussion
-    url: https://github.com/YOUR_USERNAME/fluxpay-dashboard/discussions
+    url: https://github.com/serhatsoysal/fluxpay-dashboard/discussions
     about: Ask questions or discuss ideas with the community
   - name: Security Vulnerability
-    url: https://github.com/YOUR_USERNAME/fluxpay-dashboard/security/advisories/new
+    url: https://github.com/serhatsoysal/fluxpay-dashboard/security/advisories/new
     about: Report a security vulnerability privately
 
