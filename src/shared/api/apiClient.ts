@@ -30,14 +30,22 @@ const processQueue = (error: any, token: string | null = null) => {
 };
 
 apiClient.interceptors.request.use((config) => {
-    const tenantId = useAuthStore.getState().tenantId;
-    if (tenantId) {
-        config.headers['X-Tenant-ID'] = tenantId;
-    }
+    const url = config.url || '';
+    const isPublicEndpoint = url.includes('/tenants/register') || 
+                            url.includes('/auth/login') ||
+                            url === '/auth/login' ||
+                            url === '/tenants/register';
 
-    const token = tokenManager.getToken();
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+    if (!isPublicEndpoint) {
+        const tenantId = useAuthStore.getState().tenantId;
+        if (tenantId) {
+            config.headers['X-Tenant-ID'] = tenantId;
+        }
+
+        const token = tokenManager.getToken();
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
     }
 
     return config;
@@ -76,6 +84,7 @@ apiClient.interceptors.response.use(
                         headers: {
                             'Content-Type': 'application/json',
                         },
+                        withCredentials: CORS_CONFIG.withCredentials,
                     }
                 );
 
@@ -98,11 +107,6 @@ apiClient.interceptors.response.use(
             } finally {
                 isRefreshing = false;
             }
-        }
-
-        const status = error.response?.status;
-        if (status === 404 || status === 500 || status === 400 || status === 403) {
-            error.suppressError = true;
         }
 
         return Promise.reject(error);
