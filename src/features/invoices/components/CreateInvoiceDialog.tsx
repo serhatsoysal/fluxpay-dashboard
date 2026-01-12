@@ -75,6 +75,7 @@ export const CreateInvoiceDialog: FC<CreateInvoiceDialogProps> = ({
                 title: 'Coming Soon',
                 description: 'Invoice creation will be available in a future update.',
             });
+            onSuccess();
             handleClose();
         } catch (error: any) {
             toast({

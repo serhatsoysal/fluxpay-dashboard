@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api/apiClient';
 import { API_ROUTES } from '@/shared/constants/apiEndpoints';
-import { Product, Price, CreatePriceInput, UpdatePriceInput } from '../types/product.types';
+import { Product, Price, CreatePriceInput } from '../types/product.types';
 
 export interface CreateProductInput {
     name: string;

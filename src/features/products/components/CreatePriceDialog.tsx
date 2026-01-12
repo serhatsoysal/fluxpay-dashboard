@@ -2,7 +2,6 @@ import { FC, useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useCreatePrice } from '../api/productsQueries';
 import { CreatePriceInput, PricingModel, BillingInterval } from '../types/product.types';
-import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
 import { toast } from '@/shared/components/ui/use-toast';
 
 interface CreatePriceDialogProps {

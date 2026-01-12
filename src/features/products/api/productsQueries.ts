@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { productsApi, CreateProductInput, UpdateProductInput, CreatePriceInput } from './productsApi';
+import { productsApi, CreateProductInput, UpdateProductInput } from './productsApi';
+import { CreatePriceInput } from '../types/product.types';
 
 export const PRODUCTS_QUERY_KEY = 'products';
 export const PRICES_QUERY_KEY = 'prices';
@@ -77,7 +78,7 @@ export const useCreatePrice = () => {
     return useMutation({
         mutationFn: ({ productId, input }: { productId: string; input: CreatePriceInput }) =>
             productsApi.createPrice(productId, input),
-        onSuccess: (data, variables) => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: [PRICES_QUERY_KEY, variables.productId] });
             queryClient.invalidateQueries({ queryKey: [PRODUCTS_QUERY_KEY] });
         },

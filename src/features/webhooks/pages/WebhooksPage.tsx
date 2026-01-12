@@ -13,7 +13,7 @@ export const WebhooksPage: FC = () => {
     const [selectedWebhook, setSelectedWebhook] = useState<Webhook | null>(null);
 
     const { data: webhooksData, isLoading } = useWebhooks();
-    const webhooks = webhooksData?.content || [];
+    const webhooks = webhooksData || [];
     const deleteWebhookMutation = useDeleteWebhook();
 
     const handleDelete = async () => {
@@ -85,7 +85,7 @@ export const WebhooksPage: FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
-                                    {webhooks.map((webhook) => (
+                                    {webhooks.map((webhook: Webhook) => (
                                         <tr key={webhook.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
                                             <td className="py-3 px-6">
                                                 <div className="text-sm font-mono text-slate-900 dark:text-white max-w-md truncate">
@@ -94,7 +94,7 @@ export const WebhooksPage: FC = () => {
                                             </td>
                                             <td className="py-3 px-6">
                                                 <div className="flex flex-wrap gap-1">
-                                                    {webhook.events.slice(0, 3).map((event) => (
+                                                    {webhook.events.slice(0, 3).map((event: string) => (
                                                         <span
                                                             key={event}
                                                             className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300"

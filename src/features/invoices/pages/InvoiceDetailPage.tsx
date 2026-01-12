@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useInvoice, useFinalizeInvoice, useVoidInvoice } from '../api/invoicesQueries';
 import { invoicesApi } from '../api/invoicesApi';
@@ -12,7 +12,6 @@ import { toast } from '@/shared/components/ui/use-toast';
 
 export const InvoiceDetailPage: FC = () => {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const { data: invoice, isLoading, error } = useInvoice(id || '');
     const { data: items = [] } = useQuery({
         queryKey: ['invoices', id, 'items'],
@@ -189,7 +188,7 @@ export const InvoiceDetailPage: FC = () => {
                                 <div>
                                     <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">Invoice Date</dt>
                                     <dd className="mt-1 text-sm text-slate-900 dark:text-white">
-                                        {invoice.invoiceDate ? formatDate(invoice.invoiceDate) : invoice.createdDate ? formatDate(invoice.createdDate) : '-'}
+                                        {invoice.invoiceDate ? formatDate(invoice.invoiceDate) : invoice.createdAt ? formatDate(invoice.createdAt) : '-'}
                                     </dd>
                                 </div>
                                 <div>

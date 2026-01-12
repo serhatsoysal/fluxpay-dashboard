@@ -1,16 +1,14 @@
 import { FC, useState } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useProduct, useProductPrices } from '../api/productsQueries';
 import { CreatePriceDialog } from '../components/CreatePriceDialog';
 import { ROUTES } from '@/shared/constants/routes';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
-import { formatDate } from '@/shared/utils/dateHelpers';
 import { cn } from '@/shared/utils/cn';
-import { Price, PricingModel, BillingInterval } from '../types/product.types';
+import { Price } from '../types/product.types';
 
 export const ProductDetailPage: FC = () => {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const { data: product, isLoading, error } = useProduct(id || '');
     const { data: prices = [] } = useProductPrices(id || '');
     const [isCreatePriceDialogOpen, setIsCreatePriceDialogOpen] = useState(false);

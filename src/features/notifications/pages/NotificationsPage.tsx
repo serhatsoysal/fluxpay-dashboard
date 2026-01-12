@@ -1,23 +1,13 @@
 import { FC, useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNotifications, useMarkAsRead } from '../api/notificationsQueries';
-import { formatDate, formatRelativeTime } from '@/shared/utils/dateHelpers';
+import { Notification } from '../types/notification.types';
+import { formatRelativeTime } from '@/shared/utils/dateHelpers';
 import { cn } from '@/shared/utils/cn';
 import { toast } from '@/shared/components/ui/use-toast';
-
-interface Notification {
-    id: string;
-    title: string;
-    message: string;
-    read: boolean;
-    createdAt: string;
-    type?: string;
-}
 
 export const NotificationsPage: FC = () => {
     const [page, setPage] = useState(0);
     const [size] = useState(20);
-    const queryClient = useQueryClient();
 
     const { data, isLoading } = useNotifications({ page, size });
     const markAsReadMutation = useMarkAsRead();
@@ -67,7 +57,7 @@ export const NotificationsPage: FC = () => {
                             Manage your notifications
                         </p>
                     </div>
-                    {notifications.some(n => !n.read) && (
+                    {notifications.some(n => n.status === 'unread') && (
                         <button
                             onClick={handleMarkAllAsRead}
                             disabled={markAllAsReadMutation.isPending}
@@ -97,7 +87,7 @@ export const NotificationsPage: FC = () => {
                                         key={notification.id}
                                         className={cn(
                                             'p-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors',
-                                            !notification.read && 'bg-blue-50/50 dark:bg-blue-900/10'
+                                            notification.status === 'unread' && 'bg-blue-50/50 dark:bg-blue-900/10'
                                         )}
                                     >
                                         <div className="flex items-start justify-between gap-4">
@@ -105,13 +95,13 @@ export const NotificationsPage: FC = () => {
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <h3 className={cn(
                                                         'text-sm font-semibold',
-                                                        !notification.read
+                                                        notification.status === 'unread'
                                                             ? 'text-slate-900 dark:text-white'
                                                             : 'text-slate-700 dark:text-slate-300'
                                                     )}>
                                                         {notification.title}
                                                     </h3>
-                                                    {!notification.read && (
+                                                    {notification.status === 'unread' && (
                                                         <span className="size-2 rounded-full bg-primary"></span>
                                                     )}
                                                 </div>
@@ -122,7 +112,7 @@ export const NotificationsPage: FC = () => {
                                                     {formatRelativeTime(notification.createdAt)}
                                                 </p>
                                             </div>
-                                            {!notification.read && (
+                                            {notification.status === 'unread' && (
                                                 <button
                                                     onClick={() => handleMarkAsRead(notification.id)}
                                                     disabled={markAsReadMutation.isPending}

@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { webhooksApi, CreateWebhookInput } from './webhooksApi';
+import { webhooksApi } from './webhooksApi';
+import { CreateWebhookInput } from '../types/webhook.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 export const WEBHOOKS_QUERY_KEY = 'webhooks';

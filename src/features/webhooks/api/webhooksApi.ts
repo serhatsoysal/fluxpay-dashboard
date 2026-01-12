@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api/apiClient';
 import { API_ROUTES } from '@/shared/constants/apiEndpoints';
-import { Webhook, CreateWebhookInput, UpdateWebhookInput } from '../types/webhook.types';
+import { Webhook, CreateWebhookInput } from '../types/webhook.types';
 
 export const webhooksApi = {
     getAll: async (): Promise<Webhook[]> => {

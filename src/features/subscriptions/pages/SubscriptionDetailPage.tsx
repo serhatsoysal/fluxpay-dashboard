@@ -10,7 +10,6 @@ import {
     getStatusColor,
     getStatusDotColor,
     formatCurrency,
-    formatNextBilling,
     getCustomerInitials,
 } from '../utils/subscriptionHelpers';
 import { formatDate } from '@/shared/utils/dateHelpers';

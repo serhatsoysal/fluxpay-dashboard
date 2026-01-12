@@ -14,7 +14,7 @@ export const AppLayout: FC = () => {
     }, [isSidebarOpen]);
 
     const toggleSidebar = () => {
-        setIsSidebarOpen(prev => !prev);
+        setIsSidebarOpen((prev: boolean) => !prev);
     };
 
     const closeSidebar = () => {

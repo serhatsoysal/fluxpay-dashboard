@@ -6,7 +6,6 @@ import { InvoiceStatus } from '../types/invoice.types';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
 import { cn } from '@/shared/utils/cn';
 import { ROUTES } from '@/shared/constants/routes';
-import { toast } from '@/shared/components/ui/use-toast';
 import { CreateInvoiceDialog } from '../components/CreateInvoiceDialog';
 
 export const InvoicesPage: FC = () => {
@@ -135,10 +134,7 @@ export const InvoicesPage: FC = () => {
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Outstanding</span>
                     <div className="flex items-end gap-2">
                         <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {formatCurrency((stats?.totalOutstanding || 0) * 100, 'USD')}
-                        </span>
-                        <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded", (stats?.totalOutstandingChange || 0) >= 0 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400" : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                            {(stats?.totalOutstandingChange || 0) > 0 ? '+' : ''}{stats?.totalOutstandingChange || 0}%
+                            {formatCurrency((stats?.totalAmountDue || 0) * 100, 'USD')}
                         </span>
                     </div>
                 </div>
@@ -146,20 +142,14 @@ export const InvoicesPage: FC = () => {
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Past Due</span>
                     <div className="flex items-end gap-2">
                         <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {formatCurrency((stats?.pastDue || 0) * 100, 'USD')}
-                        </span>
-                        <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded", (stats?.pastDueChange || 0) <= 0 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400" : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                            {(stats?.pastDueChange || 0) > 0 ? '+' : ''}{stats?.pastDueChange || 0}%
+                            {formatCurrency((stats?.overdueAmount || 0) * 100, 'USD')}
                         </span>
                     </div>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700 flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Payment Time</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overdue Count</span>
                     <div className="flex items-end gap-2">
-                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{stats?.avgPaymentTime || 0} days</span>
-                        <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded", (stats?.avgPaymentTimeChange || 0) <= 0 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400" : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                            {stats?.avgPaymentTimeChange || 0} day
-                        </span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{stats?.overdueCount || 0}</span>
                     </div>
                 </div>
             </div>

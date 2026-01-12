@@ -5,7 +5,7 @@ import { subscriptionsApi } from '@/features/subscriptions/api/subscriptionsApi'
 import { invoicesApi } from '@/features/invoices/api/invoicesApi';
 import { ROUTES } from '@/shared/constants/routes';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
-import { formatDate, formatRelativeTime } from '@/shared/utils/dateHelpers';
+import { formatDate } from '@/shared/utils/dateHelpers';
 import { cn } from '@/shared/utils/cn';
 import {
     formatSubscriptionStatus,
@@ -37,7 +37,7 @@ export const CustomerDetailPage: FC = () => {
     });
 
     const customerName = subscriptions[0]?.customerName || 'Customer';
-    const customerEmail = subscriptions[0]?.customerEmail || id || '';
+    const customerEmail = subscriptions[0]?.customerId || id || '';
     const isLoading = subscriptionsLoading || invoicesLoading;
 
     if (isLoading) {

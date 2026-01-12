@@ -1,5 +1,5 @@
 import { FC, useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams, useNavigate, Link } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useProducts, useDeleteProduct } from '../api/productsQueries';
 import { Product } from '../types/product.types';
 import { CreateProductDialog } from '../components/CreateProductDialog';
