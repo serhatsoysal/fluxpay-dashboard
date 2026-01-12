@@ -28,3 +28,36 @@ export interface ProductFilters {
     type?: string;
     created?: string;
 }
+
+export type PricingModel = 'FLAT_RATE' | 'PER_UNIT' | 'TIERED' | 'VOLUME';
+export type BillingInterval = 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
+
+export interface Price {
+    id: string;
+    productId: string;
+    pricingModel: PricingModel;
+    billingInterval: BillingInterval;
+    unitAmount: number;
+    currency: string;
+    trialPeriodDays?: number;
+    active: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface CreatePriceInput {
+    pricingModel: PricingModel;
+    billingInterval: BillingInterval;
+    unitAmount: number;
+    currency: string;
+    trialPeriodDays?: number;
+}
+
+export interface UpdatePriceInput {
+    pricingModel?: PricingModel;
+    billingInterval?: BillingInterval;
+    unitAmount?: number;
+    currency?: string;
+    trialPeriodDays?: number;
+    active?: boolean;
+}

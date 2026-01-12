@@ -31,11 +31,13 @@ export const API_ROUTES = {
         RESUME: (id: string) => `/subscriptions/${id}/resume`,
     },
     INVOICES: {
+        LIST: '/invoices',
         GET: (id: string) => `/invoices/${id}`,
         ITEMS: (id: string) => `/invoices/${id}/items`,
         CUSTOMER: (customerId: string) => `/invoices/customer/${customerId}`,
         FINALIZE: (id: string) => `/invoices/${id}/finalize`,
         VOID: (id: string) => `/invoices/${id}/void`,
+        STATS: '/invoices/stats',
     },
     NOTIFICATIONS: {
         BASE: '/notifications',
@@ -44,5 +46,12 @@ export const API_ROUTES = {
         MARK_AS_READ: (id: string) => `/notifications/${id}/read`,
         MARK_ALL_AS_READ: '/notifications/read-all',
         COUNT: '/notifications/unread-count',
+    },
+    WEBHOOKS: {
+        BASE: '/webhooks',
+        LIST: '/webhooks',
+        GET: (id: string) => `/webhooks/${id}`,
+        CREATE: '/webhooks',
+        DELETE: (id: string) => `/webhooks/${id}`,
     },
 };

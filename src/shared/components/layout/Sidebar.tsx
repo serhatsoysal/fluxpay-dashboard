@@ -18,7 +18,12 @@ const developerNav = [
     { name: 'Settings', href: ROUTES.SETTINGS, icon: 'settings_applications' },
 ];
 
-export const Sidebar: FC = () => {
+interface SidebarProps {
+    isOpen?: boolean;
+    onClose?: () => void;
+}
+
+export const Sidebar: FC<SidebarProps> = ({ isOpen = false, onClose }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, logout, logoutAll } = useAuthStore();
@@ -110,14 +115,33 @@ export const Sidebar: FC = () => {
     const initials = getInitials(userName);
     const gradient = getGradientFromInitials(initials);
 
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
     return (
-        <div className="w-64 bg-sidebar-bg text-slate-300 border-r border-slate-800/50 flex flex-col transition-all duration-300">
-            <div className="h-16 flex items-center gap-3 px-6 border-b border-slate-800/50">
-                <img src="/logo.png" alt="FluxPay Logo" className="h-8 w-auto" />
-                <h1 className="text-white text-lg font-bold tracking-tight">FluxPay</h1>
+        <>
+            <div className={cn(
+                "fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-sidebar-bg text-slate-300 border-r border-slate-800/50 flex flex-col transition-transform duration-300 ease-in-out shadow-xl lg:shadow-none",
+                isOpen ? "translate-x-0" : "-translate-x-full"
+            )}>
+            <div className="h-14 sm:h-16 flex items-center px-4 sm:px-6 border-b border-slate-800/50">
+                <img 
+                    src="/logo.png" 
+                    alt="FluxPay Logo" 
+                    className="h-8 sm:h-10 md:h-12 w-auto object-contain object-center"
+                    style={{ imageRendering: 'crisp-edges' }}
+                />
             </div>
 
-            <nav className="flex-1 overflow-y-auto py-6 px-3 flex flex-col gap-1">
+            <nav className="flex-1 overflow-y-auto py-4 sm:py-6 px-2 sm:px-3 flex flex-col gap-1">
                 {navigation.map((item) => {
                     const isActive = location.pathname === item.href;
 
@@ -125,15 +149,16 @@ export const Sidebar: FC = () => {
                         <Link
                             key={item.name}
                             to={item.href}
+                            onClick={() => onClose?.()}
                             className={cn(
-                                'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium group',
+                                'flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium group min-h-[44px] touch-manipulation',
                                 isActive
                                     ? 'bg-primary text-white shadow-md shadow-primary/20'
                                     : 'hover:bg-white/5 hover:text-white'
                             )}
                         >
                             <span className={cn(
-                                'material-symbols-outlined text-[20px]',
+                                'material-symbols-outlined text-[18px] sm:text-[20px] flex-shrink-0',
                                 !isActive && 'group-hover:text-white transition-colors'
                             )}>
                                 {item.icon}
@@ -144,7 +169,7 @@ export const Sidebar: FC = () => {
                 })}
 
                 <div className="my-2 border-t border-slate-800/50 mx-3"></div>
-                <p className="px-3 text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 mt-2">
+                <p className="px-2 sm:px-3 text-[10px] sm:text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1 mt-2">
                     Developers
                 </p>
 
@@ -155,15 +180,16 @@ export const Sidebar: FC = () => {
                         <Link
                             key={item.name}
                             to={item.href}
+                            onClick={() => onClose?.()}
                             className={cn(
-                                'flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-sm font-medium group',
+                                'flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium group min-h-[44px] touch-manipulation',
                                 isActive
                                     ? 'bg-primary text-white shadow-md shadow-primary/20'
                                     : 'hover:bg-white/5 hover:text-white'
                             )}
                         >
                             <span className={cn(
-                                'material-symbols-outlined text-[20px]',
+                                'material-symbols-outlined text-[18px] sm:text-[20px] flex-shrink-0',
                                 !isActive && 'group-hover:text-white transition-colors'
                             )}>
                                 {item.icon}
@@ -174,23 +200,23 @@ export const Sidebar: FC = () => {
                 })}
             </nav>
 
-            <div className="p-4 border-t border-slate-800/50 relative" ref={dropdownRef}>
+            <div className="p-3 sm:p-4 border-t border-slate-800/50 relative" ref={dropdownRef}>
                 <button 
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center gap-3 w-full p-2 rounded-lg hover:bg-white/5 transition-colors text-left"
+                    className="flex items-center gap-2 sm:gap-3 w-full p-2 rounded-lg hover:bg-white/5 transition-colors text-left min-h-[44px] touch-manipulation"
                 >
                     <div className={cn(
-                        "size-9 rounded-full flex items-center justify-center text-white font-semibold text-sm ring-2 ring-white/10 bg-gradient-to-br",
+                        "size-8 sm:size-9 rounded-full flex items-center justify-center text-white font-semibold text-xs sm:text-sm ring-2 ring-white/10 bg-gradient-to-br flex-shrink-0",
                         gradient
                     )}>
                         {initials}
                     </div>
-                    <div className="flex flex-col overflow-hidden">
-                        <span className="text-sm font-medium text-white truncate">{userName}</span>
-                        <span className="text-xs text-slate-400 truncate">{userEmail}</span>
+                    <div className="flex flex-col overflow-hidden min-w-0 flex-1">
+                        <span className="text-xs sm:text-sm font-medium text-white truncate">{userName}</span>
+                        <span className="text-[10px] sm:text-xs text-slate-400 truncate">{userEmail}</span>
                     </div>
                     <span className={cn(
-                        "material-symbols-outlined ml-auto text-slate-500 text-[18px] transition-transform",
+                        "material-symbols-outlined ml-auto text-slate-500 text-[16px] sm:text-[18px] transition-transform flex-shrink-0",
                         isDropdownOpen && "rotate-180"
                     )}>
                         expand_more
@@ -198,28 +224,28 @@ export const Sidebar: FC = () => {
                 </button>
 
                 {isDropdownOpen && (
-                    <div className="absolute bottom-full left-4 right-4 mb-2 bg-[#1e293b] rounded-lg shadow-xl border border-slate-700 overflow-hidden z-50">
-                        <div className="p-3 border-b border-slate-700">
-                            <p className="text-sm font-medium text-white truncate">{userName}</p>
-                            <p className="text-xs text-slate-400 truncate">{userEmail}</p>
-                            <p className="text-xs text-slate-500 mt-1 capitalize">{userRole.replace('_', ' ')}</p>
+                    <div className="absolute bottom-full left-2 sm:left-4 right-2 sm:right-4 mb-2 bg-[#1e293b] rounded-lg shadow-xl border border-slate-700 overflow-hidden z-50 min-w-[200px]">
+                        <div className="p-2 sm:p-3 border-b border-slate-700">
+                            <p className="text-xs sm:text-sm font-medium text-white truncate">{userName}</p>
+                            <p className="text-[10px] sm:text-xs text-slate-400 truncate">{userEmail}</p>
+                            <p className="text-[10px] sm:text-xs text-slate-500 mt-1 capitalize">{userRole.replace('_', ' ')}</p>
                         </div>
 
                         <div className="py-1">
                             <Link
                                 to={ROUTES.SETTINGS}
                                 onClick={() => setIsDropdownOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+                                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-xs sm:text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
                             >
-                                <span className="material-symbols-outlined text-[18px]">person</span>
+                                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">person</span>
                                 <span>Account Settings</span>
                             </Link>
                             <Link
                                 to={ROUTES.SESSIONS}
                                 onClick={() => setIsDropdownOpen(false)}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
+                                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-xs sm:text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors"
                             >
-                                <span className="material-symbols-outlined text-[18px]">devices</span>
+                                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">devices</span>
                                 <span>Active Sessions</span>
                             </Link>
                         </div>
@@ -227,16 +253,16 @@ export const Sidebar: FC = () => {
                         <div className="border-t border-slate-700 py-1">
                             <button
                                 onClick={handleLogout}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors w-full text-left"
+                                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-xs sm:text-sm text-slate-300 hover:bg-white/5 hover:text-white transition-colors w-full text-left"
                             >
-                                <span className="material-symbols-outlined text-[18px]">logout</span>
+                                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">logout</span>
                                 <span>Logout</span>
                             </button>
                             <button
                                 onClick={handleLogoutAll}
-                                className="flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full text-left"
+                                className="flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 text-xs sm:text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors w-full text-left"
                             >
-                                <span className="material-symbols-outlined text-[18px]">power_settings_new</span>
+                                <span className="material-symbols-outlined text-[16px] sm:text-[18px]">power_settings_new</span>
                                 <span>Logout All Devices</span>
                             </button>
                         </div>
@@ -244,5 +270,6 @@ export const Sidebar: FC = () => {
                 )}
             </div>
         </div>
+        </>
     );
 };

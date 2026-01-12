@@ -50,24 +50,24 @@ export const DashboardPage: FC = () => {
     };
 
     return (
-        <div className="p-6 lg:p-8">
-            <div className="mx-auto max-w-7xl flex flex-col gap-8">
-            <header className="flex flex-wrap items-end justify-between gap-4">
+        <div className="p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto max-w-7xl flex flex-col gap-6 sm:gap-8">
+            <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
                 <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-2 text-slate-500 text-sm">
+                    <div className="flex items-center gap-2 text-slate-500 text-xs sm:text-sm">
                         <span className="text-slate-900 dark:text-white font-medium">Dashboard</span>
                     </div>
-                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
-                    <p className="text-slate-500 dark:text-slate-400 text-base max-w-2xl">Overview of your financial performance.</p>
+                    <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">Dashboard</h1>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm sm:text-base max-w-2xl">Overview of your financial performance.</p>
                 </div>
-                <div className="flex items-center rounded-lg bg-white p-1 shadow-sm ring-1 ring-slate-200">
+                <div className="flex items-center rounded-lg bg-white dark:bg-slate-800 p-1 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 overflow-x-auto">
                     <button
                         onClick={() => setDateFilter('Last 30 Days')}
                         className={cn(
-                            "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                            "rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors touch-manipulation min-h-[36px] whitespace-nowrap",
                             dateFilter === 'Last 30 Days'
-                                ? "bg-slate-100 text-slate-900 shadow-sm"
-                                : "text-slate-600 hover:bg-slate-50"
+                                ? "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                                : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                         )}
                     >
                         Last 30 Days
@@ -75,10 +75,10 @@ export const DashboardPage: FC = () => {
                     <button
                         onClick={() => setDateFilter('Year to Date')}
                         className={cn(
-                            "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                            "rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors touch-manipulation min-h-[36px] whitespace-nowrap",
                             dateFilter === 'Year to Date'
-                                ? "bg-slate-100 text-slate-900 shadow-sm"
-                                : "text-slate-600 hover:bg-slate-50"
+                                ? "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                                : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                         )}
                     >
                         Year to Date
@@ -86,10 +86,10 @@ export const DashboardPage: FC = () => {
                     <button
                         onClick={() => setDateFilter('Custom')}
                         className={cn(
-                            "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                            "rounded-md px-2 sm:px-3 py-1.5 text-xs sm:text-sm font-medium transition-colors touch-manipulation min-h-[36px] whitespace-nowrap",
                             dateFilter === 'Custom'
-                                ? "bg-slate-100 text-slate-900 shadow-sm"
-                                : "text-slate-600 hover:bg-slate-50"
+                                ? "bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                                : "text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700"
                         )}
                     >
                         Custom
@@ -97,14 +97,14 @@ export const DashboardPage: FC = () => {
                 </div>
             </header>
 
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                <div className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200 transition-all hover:shadow-md">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div className="group relative overflow-hidden rounded-xl bg-white dark:bg-slate-800 p-4 sm:p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200 dark:ring-slate-700 transition-all hover:shadow-md">
                     <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-slate-500">MRR</p>
-                        <span className="material-symbols-outlined text-slate-300" style={{ fontSize: '20px' }}>attach_money</span>
+                        <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">MRR</p>
+                        <span className="material-symbols-outlined text-slate-300 dark:text-slate-600" style={{ fontSize: '18px' }}>attach_money</span>
                     </div>
-                    <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-slate-900 tracking-tight">
+                    <div className="mt-2 flex items-baseline gap-2 flex-wrap">
+                        <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">
                             {formatCurrency(mrr * 100, 'USD')}
                         </span>
                         <span className="inline-flex items-baseline rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
@@ -126,13 +126,13 @@ export const DashboardPage: FC = () => {
                     </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200 transition-all hover:shadow-md">
+                <div className="group relative overflow-hidden rounded-xl bg-white dark:bg-slate-800 p-4 sm:p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200 dark:ring-slate-700 transition-all hover:shadow-md">
                     <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-slate-500">Active Subscribers</p>
-                        <span className="material-symbols-outlined text-slate-300" style={{ fontSize: '20px' }}>people</span>
+                        <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Active Subscribers</p>
+                        <span className="material-symbols-outlined text-slate-300 dark:text-slate-600" style={{ fontSize: '18px' }}>people</span>
                     </div>
-                    <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-slate-900 tracking-tight">{activeSubscribers}</span>
+                    <div className="mt-2 flex items-baseline gap-2 flex-wrap">
+                        <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">{activeSubscribers}</span>
                         <span className="inline-flex items-baseline rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
                             <span className="material-symbols-outlined mr-0.5 self-center" style={{ fontSize: '12px' }}>arrow_upward</span>
                             45
@@ -152,13 +152,13 @@ export const DashboardPage: FC = () => {
                     </div>
                 </div>
 
-                <div className="group relative overflow-hidden rounded-xl bg-white p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200 transition-all hover:shadow-md">
+                <div className="group relative overflow-hidden rounded-xl bg-white dark:bg-slate-800 p-4 sm:p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] ring-1 ring-slate-200 dark:ring-slate-700 transition-all hover:shadow-md sm:col-span-2 lg:col-span-1">
                     <div className="flex items-center justify-between">
-                        <p className="text-sm font-medium text-slate-500">Churn Rate</p>
-                        <span className="material-symbols-outlined text-slate-300" style={{ fontSize: '20px' }}>trending_down</span>
+                        <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">Churn Rate</p>
+                        <span className="material-symbols-outlined text-slate-300 dark:text-slate-600" style={{ fontSize: '18px' }}>trending_down</span>
                     </div>
-                    <div className="mt-2 flex items-baseline gap-2">
-                        <span className="text-3xl font-bold text-slate-900 tracking-tight">2.1%</span>
+                    <div className="mt-2 flex items-baseline gap-2 flex-wrap">
+                        <span className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white tracking-tight">2.1%</span>
                         <span className="inline-flex items-baseline rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700">
                             <span className="material-symbols-outlined mr-0.5 self-center" style={{ fontSize: '12px' }}>arrow_downward</span>
                             0.4%
@@ -172,56 +172,59 @@ export const DashboardPage: FC = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col rounded-xl bg-white shadow-sm ring-1 ring-slate-200">
-                <div className="flex items-center justify-between border-b border-slate-200 px-6 py-4">
-                    <h3 className="text-base font-semibold leading-6 text-slate-900">Recent Subscriptions</h3>
+            <div className="flex flex-col rounded-xl bg-white dark:bg-slate-800 shadow-sm ring-1 ring-slate-200 dark:ring-slate-700 overflow-hidden">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4">
+                    <h3 className="text-sm sm:text-base font-semibold leading-6 text-slate-900 dark:text-white">Recent Subscriptions</h3>
                     <button
                         onClick={() => navigate(ROUTES.SUBSCRIPTIONS)}
-                        className="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+                        className="text-xs sm:text-sm font-medium text-primary hover:text-primary-dark transition-colors touch-manipulation"
                     >
                         View All
                     </button>
                 </div>
-                <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-200 text-left text-sm whitespace-nowrap">
-                        <thead className="bg-slate-50">
+                <div className="overflow-x-auto -mx-4 sm:mx-0">
+                    <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700 text-left text-xs sm:text-sm">
+                        <thead className="bg-slate-50 dark:bg-slate-900">
                             <tr>
-                                <th className="px-6 py-3 font-semibold text-slate-900" scope="col">Customer</th>
-                                <th className="px-6 py-3 font-semibold text-slate-900" scope="col">Plan</th>
-                                <th className="px-6 py-3 font-semibold text-slate-900" scope="col">Amount</th>
-                                <th className="px-6 py-3 font-semibold text-slate-900" scope="col">Status</th>
-                                <th className="px-6 py-3 font-semibold text-slate-900" scope="col">Date</th>
-                                <th className="relative px-6 py-3" scope="col">
+                                <th className="px-3 sm:px-6 py-3 font-semibold text-slate-900 dark:text-white" scope="col">Customer</th>
+                                <th className="px-3 sm:px-6 py-3 font-semibold text-slate-900 dark:text-white hidden sm:table-cell" scope="col">Plan</th>
+                                <th className="px-3 sm:px-6 py-3 font-semibold text-slate-900 dark:text-white" scope="col">Amount</th>
+                                <th className="px-3 sm:px-6 py-3 font-semibold text-slate-900 dark:text-white" scope="col">Status</th>
+                                <th className="px-3 sm:px-6 py-3 font-semibold text-slate-900 dark:text-white hidden md:table-cell" scope="col">Date</th>
+                                <th className="relative px-3 sm:px-6 py-3" scope="col">
                                     <span className="sr-only">Actions</span>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-200 bg-white">
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-800">
                             {recentSubscriptions.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="px-6 py-12 text-center text-sm text-slate-500">
+                                    <td colSpan={6} className="px-4 sm:px-6 py-8 sm:py-12 text-center text-xs sm:text-sm text-slate-500 dark:text-slate-400">
                                         No subscriptions found
                                     </td>
                                 </tr>
                             ) : (
                                 recentSubscriptions.map((sub) => (
-                                    <tr key={sub.id} className="hover:bg-slate-50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="h-8 w-8 rounded-full bg-slate-100 bg-cover bg-center" />
-                                                <div className="font-medium text-slate-900">{sub.customer}</div>
+                                    <tr key={sub.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
+                                            <div className="flex items-center gap-2 sm:gap-3">
+                                                <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-slate-100 dark:bg-slate-700 bg-cover bg-center flex-shrink-0" />
+                                                <div className="font-medium text-slate-900 dark:text-white truncate">
+                                                    <div>{sub.customer}</div>
+                                                    <div className="text-xs text-slate-500 dark:text-slate-400 sm:hidden">{sub.plan}</div>
+                                                </div>
                                             </div>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-600">{sub.plan}</td>
-                                        <td className="px-6 py-4 font-medium text-slate-900">{sub.amount}</td>
-                                        <td className="px-6 py-4">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-slate-600 dark:text-slate-300 hidden sm:table-cell">{sub.plan}</td>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 font-medium text-slate-900 dark:text-white">{sub.amount}</td>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4">
                                             <span className={getStatusBadgeClass(sub.status)}>
                                                 {sub.status}
                                             </span>
                                         </td>
-                                        <td className="px-6 py-4 text-slate-500">{sub.date}</td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="text-slate-400 hover:text-slate-600">
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-slate-500 dark:text-slate-400 hidden md:table-cell">{sub.date}</td>
+                                        <td className="px-3 sm:px-6 py-3 sm:py-4 text-right">
+                                            <button className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 touch-manipulation min-h-[36px] min-w-[36px] flex items-center justify-center">
                                                 <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>more_horiz</span>
                                             </button>
                                         </td>
@@ -231,15 +234,20 @@ export const DashboardPage: FC = () => {
                         </tbody>
                     </table>
                 </div>
-                <div className="flex items-center justify-between border-t border-slate-200 px-6 py-4">
-                    <p className="text-sm text-slate-500">
-                        Showing <span className="font-medium text-slate-900">1</span> to <span className="font-medium text-slate-900">{recentSubscriptions.length}</span> of <span className="font-medium text-slate-900">{subscriptionsData?.totalElements || recentSubscriptions.length}</span> results
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4 border-t border-slate-200 dark:border-slate-700 px-4 sm:px-6 py-3 sm:py-4">
+                    <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 text-center sm:text-left">
+                        Showing <span className="font-medium text-slate-900 dark:text-white">1</span> to <span className="font-medium text-slate-900 dark:text-white">{recentSubscriptions.length}</span> of <span className="font-medium text-slate-900 dark:text-white">{subscriptionsData?.totalElements || recentSubscriptions.length}</span> results
                     </p>
                     <div className="flex gap-2">
-                        <button className="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:bg-slate-50 disabled:opacity-50">Previous</button>
+                        <button 
+                            disabled={true}
+                            className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation min-h-[36px]"
+                        >
+                            Previous
+                        </button>
                         <button
                             onClick={() => navigate(ROUTES.SUBSCRIPTIONS)}
-                            className="rounded-lg border border-slate-200 px-3 py-1 text-sm font-medium text-slate-600 hover:bg-slate-50"
+                            className="rounded-lg border border-slate-200 dark:border-slate-700 px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 touch-manipulation min-h-[36px]"
                         >
                             Next
                         </button>
@@ -247,7 +255,7 @@ export const DashboardPage: FC = () => {
                 </div>
             </div>
 
-            <footer className="mt-12 mb-6 text-center text-xs text-slate-400">
+            <footer className="mt-8 sm:mt-12 mb-4 sm:mb-6 text-center text-xs text-slate-400 dark:text-slate-500">
                 <p>© 2023 FluxPay Inc. All rights reserved.</p>
             </footer>
             </div>

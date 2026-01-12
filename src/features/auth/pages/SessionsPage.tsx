@@ -33,7 +33,7 @@ export const SessionsPage: FC = () => {
 
     const handleLogoutDevice = async (sessionId: string) => {
         try {
-            await authApi.logout();
+            await authApi.logoutSession(sessionId);
             toast({
                 variant: 'success',
                 title: 'Success',

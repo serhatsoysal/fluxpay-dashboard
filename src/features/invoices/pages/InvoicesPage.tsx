@@ -1,15 +1,20 @@
 import { FC, useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useDebounce } from '@/shared/hooks/useDebounce';
-import { useInvoices } from '../api/invoicesQueries';
+import { useInvoices, useInvoiceStats } from '../api/invoicesQueries';
 import { InvoiceStatus } from '../types/invoice.types';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
 import { cn } from '@/shared/utils/cn';
+import { ROUTES } from '@/shared/constants/routes';
+import { CreateInvoiceDialog } from '../components/CreateInvoiceDialog';
 
 export const InvoicesPage: FC = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState<string>('All');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+    const [page, setPage] = useState(0);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const debouncedSearch = useDebounce(searchQuery, 300);
 
     useEffect(() => {
@@ -20,39 +25,40 @@ export const InvoicesPage: FC = () => {
     }, [searchParams]);
 
     const filters = useMemo(() => ({
-        page: 0,
+        page: page,
         size: 20,
         search: debouncedSearch,
         status: activeFilter !== 'All'
-            ? activeFilter.toLowerCase().replace(' ', '_') as InvoiceStatus
+            ? activeFilter.toUpperCase() as InvoiceStatus
             : undefined,
-    }), [activeFilter, debouncedSearch]);
+    }), [activeFilter, debouncedSearch, page]);
 
-    const { data, stats, isLoading } = useInvoices(filters);
+    const { data, isLoading } = useInvoices(filters);
+    const { data: stats } = useInvoiceStats();
     const invoices = data?.content || [];
 
     const getInvoiceStatusStyle = (status: string) => {
-        switch (status.toLowerCase()) {
-            case 'paid':
+        switch (status.toUpperCase()) {
+            case 'PAID':
                 return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
-            case 'open':
+            case 'OPEN':
                 return 'bg-blue-100 text-blue-800 dark:bg-blue-900/40 dark:text-blue-300 border-blue-200 dark:border-blue-800';
-            case 'past_due':
+            case 'UNCOLLECTIBLE':
                 return 'bg-red-100 text-red-800 dark:bg-red-900/40 dark:text-red-300 border-red-200 dark:border-red-800';
-            case 'void':
+            case 'VOID':
                 return 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-400 border-slate-300 dark:border-slate-600';
-            case 'draft':
+            case 'DRAFT':
             default:
                 return 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600';
         }
     };
 
     const getInvoiceStatusDot = (status: string) => {
-        switch (status.toLowerCase()) {
-            case 'paid': return 'bg-emerald-500';
-            case 'open': return 'bg-blue-500';
-            case 'past_due': return 'bg-red-500';
-            case 'void': return 'bg-slate-500';
+        switch (status.toUpperCase()) {
+            case 'PAID': return 'bg-emerald-500';
+            case 'OPEN': return 'bg-blue-500';
+            case 'UNCOLLECTIBLE': return 'bg-red-500';
+            case 'VOID': return 'bg-slate-500';
             default: return 'bg-slate-400';
         }
     };
@@ -83,11 +89,40 @@ export const InvoicesPage: FC = () => {
                     <p className="text-slate-500 dark:text-slate-400 text-base max-w-2xl">Manage and track all customer payments and invoice history.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]">
+                    <button 
+                        onClick={() => {
+                            const csvContent = [
+                                ['Invoice #', 'Customer', 'Amount', 'Currency', 'Status', 'Due Date', 'Invoice Date'].join(','),
+                                ...invoices.map((inv) => [
+                                    inv.invoiceNumber || inv.id,
+                                    `"${inv.customerEmail || 'Unknown'}"`,
+                                    (inv.total || 0) / 100,
+                                    inv.currency || 'USD',
+                                    inv.status || '',
+                                    inv.dueDate || '',
+                                    inv.invoiceDate || ''
+                                ].join(','))
+                            ].join('\n');
+                            
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                            const link = document.createElement('a');
+                            const url = URL.createObjectURL(blob);
+                            link.setAttribute('href', url);
+                            link.setAttribute('download', `invoices_${new Date().toISOString().split('T')[0]}.csv`);
+                            link.style.visibility = 'hidden';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>download</span>
                         Export
                     </button>
-                    <button className="flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all min-w-[160px]">
+                    <button 
+                        onClick={() => setIsCreateDialogOpen(true)}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all min-w-[160px]"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
                         Create Invoice
                     </button>
@@ -99,10 +134,7 @@ export const InvoicesPage: FC = () => {
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Outstanding</span>
                     <div className="flex items-end gap-2">
                         <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {formatCurrency(stats.totalOutstanding * 100, 'USD')}
-                        </span>
-                        <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded", stats.totalOutstandingChange >= 0 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400" : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                            {stats.totalOutstandingChange > 0 ? '+' : ''}{stats.totalOutstandingChange}%
+                            {formatCurrency((stats?.totalAmountDue || 0) * 100, 'USD')}
                         </span>
                     </div>
                 </div>
@@ -110,20 +142,14 @@ export const InvoicesPage: FC = () => {
                     <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Past Due</span>
                     <div className="flex items-end gap-2">
                         <span className="text-2xl font-bold text-slate-900 dark:text-white">
-                            {formatCurrency(stats.pastDue * 100, 'USD')}
-                        </span>
-                        <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded", stats.pastDueChange <= 0 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400" : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                            {stats.pastDueChange > 0 ? '+' : ''}{stats.pastDueChange}%
+                            {formatCurrency((stats?.overdueAmount || 0) * 100, 'USD')}
                         </span>
                     </div>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-4 border border-slate-200 dark:border-slate-700 flex flex-col gap-1">
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Avg Payment Time</span>
+                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Overdue Count</span>
                     <div className="flex items-end gap-2">
-                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{stats.avgPaymentTime} days</span>
-                        <span className={cn("text-xs font-medium px-1.5 py-0.5 rounded", stats.avgPaymentTimeChange <= 0 ? "text-emerald-600 bg-emerald-100 dark:bg-emerald-900/30 dark:text-emerald-400" : "text-red-600 bg-red-100 dark:bg-red-900/30 dark:text-red-400")}>
-                            {stats.avgPaymentTimeChange} day
-                        </span>
+                        <span className="text-2xl font-bold text-slate-900 dark:text-white">{stats?.overdueCount || 0}</span>
                     </div>
                 </div>
             </div>
@@ -158,10 +184,31 @@ export const InvoicesPage: FC = () => {
                                 className="pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-600 rounded-md text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary w-full sm:w-64 transition-all"
                             />
                         </div>
-                        <button className="p-2 border border-slate-300 dark:border-slate-600 rounded-md text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+                        <button 
+                            onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'date';
+                                input.onchange = (e: any) => {
+                                    const date = e.target.value;
+                                    if (date) {
+                                        setSearchQuery(`date:${date}`);
+                                    }
+                                };
+                                input.click();
+                            }}
+                            className="p-2 border border-slate-300 dark:border-slate-600 rounded-md text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                            title="Filter by date"
+                        >
                             <span className="material-symbols-outlined text-[20px]">calendar_today</span>
                         </button>
-                        <button className="p-2 border border-slate-300 dark:border-slate-600 rounded-md text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors">
+                        <button 
+                            onClick={() => {
+                                const newFilter = activeFilter === 'All' ? 'Draft' : activeFilter === 'Draft' ? 'Open' : activeFilter === 'Open' ? 'Paid' : 'All';
+                                setActiveFilter(newFilter);
+                            }}
+                            className="p-2 border border-slate-300 dark:border-slate-600 rounded-md text-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
+                            title="Toggle filter"
+                        >
                             <span className="material-symbols-outlined text-[20px]">filter_list</span>
                         </button>
                     </div>
@@ -192,17 +239,17 @@ export const InvoicesPage: FC = () => {
                                     </tr>
                                 ) : invoices.map((inv) => (
                                     <tr key={inv.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group cursor-pointer">
-                                        <td className="px-6 py-4">
+                                        <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
                                             <input type="checkbox" className="rounded border-slate-300 text-primary focus:ring-primary bg-white dark:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity checked:opacity-100" />
                                         </td>
                                         <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">
-                                            {formatCurrency(inv.amount * 100, inv.currency)}
+                                            {formatCurrency(inv.total, inv.currency)}
                                             <span className="text-xs font-normal text-slate-400 ml-1">{inv.currency}</span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border', getInvoiceStatusStyle(inv.status))}>
                                                 <span className={cn('size-1.5 rounded-full', getInvoiceStatusDot(inv.status))}></span>
-                                                {inv.status.charAt(0).toUpperCase() + inv.status.slice(1).replace('_', ' ')}
+                                                {inv.status.charAt(0) + inv.status.slice(1).toLowerCase()}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 font-medium text-slate-900 dark:text-white">
@@ -220,14 +267,20 @@ export const InvoicesPage: FC = () => {
                                                 {inv.customerEmail}
                                             </div>
                                         </td>
-                                        <td className={cn("px-6 py-4 text-slate-500", inv.status === 'past_due' && "text-red-600 font-medium")}>
-                                            {inv.dueDate}
+                                        <td className={cn("px-6 py-4 text-slate-500", inv.status === 'OPEN' && new Date(inv.dueDate) < new Date() && "text-red-600 font-medium")}>
+                                            {inv.dueDate ? new Date(inv.dueDate).toLocaleDateString() : ''}
                                         </td>
                                         <td className="px-6 py-4 text-slate-500">
-                                            {inv.createdDate}
+                                            {inv.invoiceDate ? new Date(inv.invoiceDate).toLocaleDateString() : ''}
                                         </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+                                        <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                                            <button 
+                                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(ROUTES.INVOICE_DETAIL.replace(':id', inv.id));
+                                                }}
+                                            >
                                                 <span className="material-symbols-outlined text-[20px]">more_horiz</span>
                                             </button>
                                         </td>
@@ -238,16 +291,35 @@ export const InvoicesPage: FC = () => {
                     </div>
                     <div className="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 px-6 py-4 flex items-center justify-between">
                         <p className="text-sm text-slate-500">
-                            Viewing <span className="font-medium text-slate-900 dark:text-white">1-{invoices.length}</span> of <span className="font-medium text-slate-900 dark:text-white">{1432}</span> results
+                            Viewing <span className="font-medium text-slate-900 dark:text-white">{page * 20 + 1}-{Math.min((page + 1) * 20, data?.totalElements || invoices.length)}</span> of <span className="font-medium text-slate-900 dark:text-white">{data?.totalElements || invoices.length}</span> results
                         </p>
                         <div className="flex gap-2">
-                            <button className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed" disabled>Previous</button>
-                            <button className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700">Next</button>
+                            <button 
+                                onClick={() => setPage(p => Math.max(0, p - 1))}
+                                disabled={page === 0}
+                                className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+                            <button 
+                                onClick={() => setPage(p => p + 1)}
+                                disabled={!data || (page + 1) * 20 >= (data.totalElements || 0)}
+                                className="px-3 py-1 border border-slate-300 dark:border-slate-600 rounded text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
             </div>
+            <CreateInvoiceDialog
+                isOpen={isCreateDialogOpen}
+                onClose={() => setIsCreateDialogOpen(false)}
+                onSuccess={() => {
+                    setIsCreateDialogOpen(false);
+                }}
+            />
         </div>
     );
 };

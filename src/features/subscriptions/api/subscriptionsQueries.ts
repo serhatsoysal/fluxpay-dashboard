@@ -75,3 +75,27 @@ export const useCancelSubscription = () => {
         },
     });
 };
+
+export const usePauseSubscription = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: string) => subscriptionsApi.pause(id),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['subscriptions', data.id] });
+            queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+        },
+    });
+};
+
+export const useResumeSubscription = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (id: string) => subscriptionsApi.resume(id),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['subscriptions', data.id] });
+            queryClient.invalidateQueries({ queryKey: ['subscriptions'] });
+        },
+    });
+};
