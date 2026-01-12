@@ -11,6 +11,7 @@ import { TermsOfServiceContent } from '@/shared/components/legal/TermsOfServiceC
 export const RegisterPage: FC = () => {
     const navigate = useNavigate();
     const register = useAuthStore((state) => state.register);
+    const logout = useAuthStore((state) => state.logout);
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
     const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
@@ -38,11 +39,13 @@ export const RegisterPage: FC = () => {
                 adminLastName: lastName,
             });
 
+            await logout();
+
             toast({
                 title: 'Account Created',
-                description: 'Welcome to FluxPay!',
+                description: 'Please sign in to continue.',
             });
-            navigate(ROUTES.DASHBOARD);
+            navigate(ROUTES.LOGIN);
         } catch (error: any) {
             toast({
                 variant: 'destructive',
