@@ -20,10 +20,7 @@ const generateSecureApiKey = (): string => {
         return `${prefix}${suffix}`;
     }
 
-    const fallbackSuffix = Array.from({ length }, () =>
-        alphabet.charAt(Math.floor(Math.random() * alphabet.length)),
-    ).join('');
-    return `${prefix}${fallbackSuffix}`;
+    throw new Error('Secure random number generator is not available in this environment.');
 };
 
 export const SettingsPage: FC = () => {
