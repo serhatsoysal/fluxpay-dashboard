@@ -1,8 +1,10 @@
-import { FC, useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { FC, useState, useMemo, useEffect, useRef } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/shared/constants/routes';
 import { useSubscriptions } from '@/features/subscriptions/api/subscriptionsQueries';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
 import { cn } from '@/shared/utils/cn';
+import { CreateCustomerDialog } from '../components/CreateCustomerDialog';
 
 interface Customer {
     id: string;
@@ -19,8 +21,17 @@ interface Customer {
 
 export const CustomersPage: FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [statusFilter, setStatusFilter] = useState<string>('All');
+    const [planFilter, setPlanFilter] = useState<string>('All');
+    const [createdFilter, setCreatedFilter] = useState<string>('Any time');
+    const [isPlanOpen, setIsPlanOpen] = useState(false);
+    const [isCreatedOpen, setIsCreatedOpen] = useState(false);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [page, setPage] = useState(0);
+    const planRef = useRef<HTMLDivElement>(null);
+    const createdRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const urlSearch = searchParams.get('search') || '';
@@ -31,6 +42,20 @@ export const CustomersPage: FC = () => {
             return prev;
         });
     }, [searchParams]);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (planRef.current && !planRef.current.contains(event.target as Node)) {
+                setIsPlanOpen(false);
+            }
+            if (createdRef.current && !createdRef.current.contains(event.target as Node)) {
+                setIsCreatedOpen(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     const handleSearchChange = (value: string) => {
         setSearchQuery(value);
@@ -104,6 +129,12 @@ export const CustomersPage: FC = () => {
         return Array.from(customerMap.values());
     }, [subscriptions]);
 
+    const availablePlans = useMemo(() => {
+        const plans = new Set<string>();
+        customers.forEach(c => plans.add(c.currentPlan));
+        return Array.from(plans).sort();
+    }, [customers]);
+
     const filteredCustomers = useMemo(() => {
         let filtered = customers;
 
@@ -126,8 +157,46 @@ export const CustomersPage: FC = () => {
             filtered = filtered.filter((c) => c.status === statusMap[statusFilter]);
         }
 
+        if (planFilter !== 'All') {
+            filtered = filtered.filter((c) => c.currentPlan === planFilter);
+        }
+
+        if (createdFilter !== 'Any time') {
+            const now = new Date();
+            filtered = filtered.filter((customer) => {
+                if (!customer.dateAdded) return false;
+                try {
+                    const createdDate = new Date(customer.dateAdded);
+                    if (isNaN(createdDate.getTime())) {
+                        return false;
+                    }
+                    const diffTime = Math.abs(now.getTime() - createdDate.getTime());
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                    switch (createdFilter) {
+                        case 'Last week':
+                            return diffDays <= 7;
+                        case 'Last month':
+                            return diffDays <= 30;
+                        case 'Last year':
+                            return diffDays <= 365;
+                        default:
+                            return true;
+                    }
+                } catch {
+                    return false;
+                }
+            });
+        }
+
         return filtered;
-    }, [customers, searchQuery, statusFilter]);
+    }, [customers, searchQuery, statusFilter, planFilter, createdFilter]);
+
+    const paginatedCustomers = useMemo(() => {
+        const start = page * 20;
+        const end = start + 20;
+        return filteredCustomers.slice(start, end);
+    }, [filteredCustomers, page]);
 
     const getStatusBadge = (status: string) => {
         switch (status) {
@@ -197,11 +266,40 @@ export const CustomersPage: FC = () => {
                     <p className="text-slate-500 dark:text-slate-400 text-base max-w-2xl">Manage your customer base, track subscription status, and handle billing orchestration.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]">
+                    <button 
+                        onClick={() => {
+                            const csvContent = [
+                                ['Customer Name', 'Email', 'Status', 'Total Spend', 'Current Plan', 'Date Added', 'Last Invoice'].join(','),
+                                ...filteredCustomers.map((customer) => [
+                                    `"${customer.name}"`,
+                                    `"${customer.email}"`,
+                                    customer.status,
+                                    customer.totalSpend,
+                                    `"${customer.currentPlan}"`,
+                                    customer.dateAdded,
+                                    customer.lastInvoice
+                                ].join(','))
+                            ].join('\n');
+                            
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                            const link = document.createElement('a');
+                            const url = URL.createObjectURL(blob);
+                            link.setAttribute('href', url);
+                            link.setAttribute('download', `customers_${new Date().toISOString().split('T')[0]}.csv`);
+                            link.style.visibility = 'hidden';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>download</span>
                         Export
                     </button>
-                    <button className="flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all min-w-[160px]">
+                    <button 
+                        onClick={() => setIsCreateDialogOpen(true)}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all min-w-[160px]"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
                         Add customer
                     </button>
@@ -235,16 +333,82 @@ export const CustomersPage: FC = () => {
                         <span className="text-sm font-medium text-slate-900">{statusFilter}</span>
                         <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 transition-colors" style={{ fontSize: '18px' }}>keyboard_arrow_down</span>
                     </button>
-                    <button className="group flex items-center gap-2 rounded-lg border border-slate-200 bg-white hover:border-slate-300 px-3 py-1.5 transition-colors shadow-sm">
-                        <span className="text-sm font-medium text-slate-600">Plan:</span>
-                        <span className="text-sm font-medium text-slate-900">All</span>
-                        <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 transition-colors" style={{ fontSize: '18px' }}>keyboard_arrow_down</span>
-                    </button>
-                    <button className="group flex items-center gap-2 rounded-lg border border-slate-200 bg-white hover:border-slate-300 px-3 py-1.5 transition-colors shadow-sm">
-                        <span className="text-sm font-medium text-slate-600">Created:</span>
-                        <span className="text-sm font-medium text-slate-900">Any time</span>
-                        <span className="material-symbols-outlined text-slate-400 group-hover:text-slate-600 transition-colors" style={{ fontSize: '18px' }}>keyboard_arrow_down</span>
-                    </button>
+                    <div ref={planRef} className="relative">
+                        <button 
+                            onClick={() => setIsPlanOpen(!isPlanOpen)}
+                            className="group flex items-center gap-2 rounded-lg border border-slate-200 bg-white hover:border-slate-300 px-3 py-1.5 transition-colors shadow-sm"
+                        >
+                            <span className="text-sm font-medium text-slate-600">Plan:</span>
+                            <span className="text-sm font-medium text-slate-900">{planFilter}</span>
+                            <span className={cn("material-symbols-outlined text-slate-400 group-hover:text-slate-600 transition-colors", isPlanOpen && "rotate-180")} style={{ fontSize: '18px' }}>keyboard_arrow_down</span>
+                        </button>
+                        {isPlanOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-48 bg-white border border-slate-200 rounded-lg shadow-xl z-50">
+                                <button
+                                    onClick={() => {
+                                        setPlanFilter('All');
+                                        setIsPlanOpen(false);
+                                    }}
+                                    className={cn(
+                                        "w-full text-left px-3 py-2 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg",
+                                        planFilter === 'All'
+                                            ? "bg-primary/10 text-primary font-medium"
+                                            : "text-slate-600 hover:bg-slate-50"
+                                    )}
+                                >
+                                    All
+                                </button>
+                                {availablePlans.map((plan) => (
+                                    <button
+                                        key={plan}
+                                        onClick={() => {
+                                            setPlanFilter(plan);
+                                            setIsPlanOpen(false);
+                                        }}
+                                        className={cn(
+                                            "w-full text-left px-3 py-2 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg",
+                                            planFilter === plan
+                                                ? "bg-primary/10 text-primary font-medium"
+                                                : "text-slate-600 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        {plan}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                    <div ref={createdRef} className="relative">
+                        <button 
+                            onClick={() => setIsCreatedOpen(!isCreatedOpen)}
+                            className="group flex items-center gap-2 rounded-lg border border-slate-200 bg-white hover:border-slate-300 px-3 py-1.5 transition-colors shadow-sm"
+                        >
+                            <span className="text-sm font-medium text-slate-600">Created:</span>
+                            <span className="text-sm font-medium text-slate-900">{createdFilter}</span>
+                            <span className={cn("material-symbols-outlined text-slate-400 group-hover:text-slate-600 transition-colors", isCreatedOpen && "rotate-180")} style={{ fontSize: '18px' }}>keyboard_arrow_down</span>
+                        </button>
+                        {isCreatedOpen && (
+                            <div className="absolute top-full left-0 mt-1 w-40 bg-white border border-slate-200 rounded-lg shadow-xl z-50">
+                                {['Any time', 'Last week', 'Last month', 'Last year'].map((time) => (
+                                    <button
+                                        key={time}
+                                        onClick={() => {
+                                            setCreatedFilter(time);
+                                            setIsCreatedOpen(false);
+                                        }}
+                                        className={cn(
+                                            "w-full text-left px-3 py-2 text-sm transition-colors first:rounded-t-lg last:rounded-b-lg",
+                                            createdFilter === time
+                                                ? "bg-primary/10 text-primary font-medium"
+                                                : "text-slate-600 hover:bg-slate-50"
+                                        )}
+                                    >
+                                        {time}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                     <div className="h-6 w-px bg-slate-200 mx-1"></div>
                     <button className="flex items-center justify-center h-9 w-9 rounded-lg border border-slate-200 bg-white text-slate-400 hover:text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>view_column</span>
@@ -267,17 +431,24 @@ export const CustomersPage: FC = () => {
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-200 bg-white">
-                            {filteredCustomers.length === 0 ? (
+                            {paginatedCustomers.length === 0 ? (
                                 <tr>
                                     <td colSpan={7} className="px-6 py-12 text-center text-sm text-slate-500">
                                         No customers found
                                     </td>
                                 </tr>
                             ) : (
-                                filteredCustomers.map((customer) => {
+                                paginatedCustomers.map((customer) => {
                                     const planInfo = getPlanIcon(customer.currentPlan);
                                     return (
-                                        <tr key={customer.id} className="group hover:bg-slate-50 transition-colors cursor-pointer">
+                                        <tr 
+                                            key={customer.id} 
+                                            className="group hover:bg-slate-50 transition-colors cursor-pointer"
+                                            onClick={(e) => {
+                                                if ((e.target as HTMLElement).closest('button')) return;
+                                                navigate(ROUTES.CUSTOMER_DETAIL.replace(':id', customer.id));
+                                            }}
+                                        >
                                             <td className="px-6 py-4">
                                                 <div className="flex items-center gap-3">
                                                     <div className={cn("h-10 w-10 shrink-0 overflow-hidden rounded-full", `bg-gradient-to-br ${customer.gradient}`)}>
@@ -326,19 +497,35 @@ export const CustomersPage: FC = () => {
                 </div>
                 <div className="flex items-center justify-between border-t border-slate-200 bg-slate-50 px-6 py-4">
                     <p className="text-sm text-slate-500">
-                        Showing <span className="font-medium text-slate-900">1</span> to <span className="font-medium text-slate-900">{Math.min(5, filteredCustomers.length)}</span> of <span className="font-medium text-slate-900">{filteredCustomers.length}</span> results
+                        Showing <span className="font-medium text-slate-900">{paginatedCustomers.length > 0 ? page * 20 + 1 : 0}</span> to <span className="font-medium text-slate-900">{Math.min((page + 1) * 20, filteredCustomers.length)}</span> of <span className="font-medium text-slate-900">{filteredCustomers.length}</span> results
                     </p>
                     <div className="flex gap-2">
-                        <button className="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-400 opacity-50 cursor-not-allowed shadow-sm">
+                        <button 
+                            onClick={() => setPage(p => Math.max(0, p - 1))}
+                            disabled={page === 0}
+                            className="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
                             Previous
                         </button>
-                        <button className="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-                            Next
-                        </button>
+                            <button 
+                                onClick={() => setPage(p => p + 1)}
+                                disabled={paginatedCustomers.length < 20 || (page + 1) * 20 >= filteredCustomers.length}
+                                className="flex items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
                     </div>
                 </div>
             </div>
             </div>
+            <CreateCustomerDialog
+                isOpen={isCreateDialogOpen}
+                onClose={() => setIsCreateDialogOpen(false)}
+                onSuccess={() => {
+                    setIsCreateDialogOpen(false);
+                    window.location.reload();
+                }}
+            />
         </div>
     );
 };

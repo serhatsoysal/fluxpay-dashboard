@@ -30,4 +30,8 @@ export const authApi = {
         const response = await apiClient.get(API_ROUTES.AUTH.SESSIONS);
         return response.data;
     },
+
+    logoutSession: async (sessionId: string): Promise<void> => {
+        await apiClient.post(`${API_ROUTES.AUTH.SESSIONS}/${sessionId}/logout`);
+    },
 };

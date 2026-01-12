@@ -38,7 +38,7 @@ export const LoginForm: FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
                         type="email"
                         autoComplete="email"
                         placeholder="name@company.com"
-                        className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-[#1e293b]/50 bg-white transition-all"
+                        className="block w-full rounded-lg border-0 py-3 px-4 text-slate-900 dark:text-white shadow-sm ring-1 ring-inset ring-slate-300 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary text-base sm:text-sm sm:leading-6 dark:bg-[#1e293b]/50 bg-white transition-all touch-manipulation"
                         {...register('email')}
                     />
                     {errors.email && (
@@ -52,7 +52,14 @@ export const LoginForm: FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
                     <Label htmlFor="password" className="block text-sm font-medium leading-6 text-slate-900 dark:text-slate-200">
                         Password
                     </Label>
-                    <a href="#" className="font-medium text-primary hover:text-primary-dark transition-colors text-sm">
+                    <a 
+                        href="#" 
+                        onClick={(e) => {
+                            e.preventDefault();
+                            window.location.href = 'mailto:support@fluxpay.com?subject=Password Reset Request';
+                        }}
+                        className="font-medium text-primary hover:text-primary-dark transition-colors text-sm"
+                    >
                         Forgot password?
                     </a>
                 </div>
@@ -62,7 +69,7 @@ export const LoginForm: FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
                         type={showPassword ? 'text' : 'password'}
                         autoComplete="current-password"
                         placeholder="••••••••"
-                        className="block w-full rounded-lg border-0 py-3 px-4 pr-10 text-slate-900 dark:text-white ring-1 ring-inset ring-slate-300 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-[#1e293b]/50 bg-white transition-all"
+                        className="block w-full rounded-lg border-0 py-3 px-4 pr-10 text-slate-900 dark:text-white ring-1 ring-inset ring-slate-300 dark:ring-slate-700 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-primary text-base sm:text-sm sm:leading-6 dark:bg-[#1e293b]/50 bg-white transition-all touch-manipulation"
                         {...register('password')}
                     />
                     <button
@@ -84,7 +91,7 @@ export const LoginForm: FC<LoginFormProps> = ({ onSubmit, isLoading }) => {
                 <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="flex w-full justify-center rounded-lg bg-primary px-3 py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary transition-all duration-200 ease-in-out disabled:opacity-70 disabled:cursor-not-allowed touch-manipulation min-h-[44px]"
                 >
                     {isLoading ? 'Signing in...' : 'Sign in to Dashboard'}
                 </button>

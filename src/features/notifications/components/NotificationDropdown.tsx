@@ -1,8 +1,10 @@
 import { FC, useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useNotifications, useUnreadCount, useMarkAsRead } from '../api/notificationsQueries';
 import { Notification } from '../types/notification.types';
 import { cn } from '@/shared/utils/cn';
 import { formatDistanceToNow } from 'date-fns';
+import { ROUTES } from '@/shared/constants/routes';
 
 interface NotificationDropdownProps {
     isOpen: boolean;
@@ -48,6 +50,7 @@ const getNotificationColor = (type: Notification['type']) => {
 };
 
 export const NotificationDropdown: FC<NotificationDropdownProps> = ({ isOpen, onClose }) => {
+    const navigate = useNavigate();
     const dropdownRef = useRef<HTMLDivElement>(null);
     const [selectedFilter, setSelectedFilter] = useState<'all' | 'unread'>('all');
     
@@ -206,7 +209,13 @@ export const NotificationDropdown: FC<NotificationDropdownProps> = ({ isOpen, on
 
             {notifications.length > 0 && (
                 <div className="border-t border-slate-200 px-4 py-2 text-center">
-                    <button className="text-xs font-medium text-primary hover:text-primary-dark transition-colors">
+                    <button 
+                        onClick={() => {
+                            onClose();
+                            navigate(ROUTES.NOTIFICATIONS);
+                        }}
+                        className="text-xs font-medium text-primary hover:text-primary-dark transition-colors"
+                    >
                         View all notifications
                     </button>
                 </div>

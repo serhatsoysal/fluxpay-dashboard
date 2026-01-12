@@ -1,10 +1,12 @@
 import { FC, useState, useMemo, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { SubscriptionStatus, SubscriptionFilters } from '../types/subscription.types';
 import { useSubscriptions } from '../api/subscriptionsQueries';
+import { ROUTES } from '@/shared/constants/routes';
 import { useDebounce } from '@/shared/hooks/useDebounce';
 import { RevenueRecognitionChart } from '../components/RevenueRecognitionChart';
 import { APIKeyWidget } from '../components/APIKeyWidget';
+import { CreateSubscriptionDialog } from '../components/CreateSubscriptionDialog';
 import {
     formatSubscriptionStatus,
     getStatusColor,
@@ -18,8 +20,11 @@ import { cn } from '@/shared/utils/cn';
 
 export const SubscriptionsPage: FC = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState<string>('Active');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+    const [page, setPage] = useState(0);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const debouncedSearch = useDebounce(searchQuery, 300);
 
     useEffect(() => {
@@ -42,7 +47,7 @@ export const SubscriptionsPage: FC = () => {
         const status = filterMap[activeFilter];
         
         const result: SubscriptionFilters = {
-            page: 0,
+            page: page,
             size: 20,
         };
         
@@ -105,11 +110,40 @@ export const SubscriptionsPage: FC = () => {
                     <p className="text-slate-500 dark:text-slate-400 text-base max-w-2xl">Manage billing, upgrades, and subscription lifecycles.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]">
+                    <button 
+                        onClick={() => {
+                            const csvContent = [
+                                ['Customer', 'Plan', 'Status', 'Amount', 'Currency', 'Next Billing', 'Created'].join(','),
+                                ...filteredSubscriptions.map((sub: any) => [
+                                    `"${sub.customerName || 'Unknown'}"`,
+                                    `"${sub.productName || 'Standard Plan'}"`,
+                                    sub.status || '',
+                                    (sub.amount || 0) / 100,
+                                    sub.currency || 'USD',
+                                    sub.currentPeriodEnd || '',
+                                    sub.createdAt || ''
+                                ].join(','))
+                            ].join('\n');
+                            
+                            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                            const link = document.createElement('a');
+                            const url = URL.createObjectURL(blob);
+                            link.setAttribute('href', url);
+                            link.setAttribute('download', `subscriptions_${new Date().toISOString().split('T')[0]}.csv`);
+                            link.style.visibility = 'hidden';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }}
+                        className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>download</span>
                         Export
                     </button>
-                    <button className="flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all min-w-[160px]">
+                    <button 
+                        onClick={() => setIsCreateDialogOpen(true)}
+                        className="flex items-center justify-center gap-2 rounded-lg bg-primary hover:bg-primary-dark px-4 py-2 text-sm font-semibold text-white shadow-sm transition-all min-w-[160px]"
+                    >
                         <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add</span>
                         Create Subscription
                     </button>
@@ -258,8 +292,15 @@ export const SubscriptionsPage: FC = () => {
                             </thead>
                             <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
                                 {filteredSubscriptions.map((sub: any) => (
-                                    <tr key={sub.id} className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                                        <td className="py-3 px-4">
+                                    <tr 
+                                        key={sub.id} 
+                                        className="group hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors cursor-pointer"
+                                        onClick={(e) => {
+                                            if ((e.target as HTMLElement).closest('button, input')) return;
+                                            navigate(ROUTES.SUBSCRIPTION_DETAIL.replace(':id', sub.id));
+                                        }}
+                                    >
+                                        <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
                                             <input className="rounded border-slate-300 text-primary focus:ring-primary" type="checkbox" />
                                         </td>
                                         <td className="py-3 px-4">
@@ -292,8 +333,14 @@ export const SubscriptionsPage: FC = () => {
                                         <td className="py-3 px-4 text-sm font-mono text-slate-900 dark:text-white text-right">
                                             {formatCurrency(sub.amount || 0, sub.currency || 'USD')}
                                         </td>
-                                        <td className="py-3 px-4 text-right">
-                                            <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                                        <td className="py-3 px-4 text-right" onClick={(e) => e.stopPropagation()}>
+                                            <button 
+                                                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    navigate(ROUTES.SUBSCRIPTION_DETAIL.replace(':id', sub.id));
+                                                }}
+                                            >
                                                 <span className="material-symbols-outlined text-[20px]">more_horiz</span>
                                             </button>
                                         </td>
@@ -306,15 +353,34 @@ export const SubscriptionsPage: FC = () => {
 
                 {filteredSubscriptions.length > 0 && (
                     <div className="p-4 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                        <span className="text-xs text-slate-500 dark:text-slate-400">Showing 1 to {filteredSubscriptions.length} of {data?.totalElements || filteredSubscriptions.length} results</span>
+                        <span className="text-xs text-slate-500 dark:text-slate-400">Showing {page * 20 + 1} to {Math.min((page + 1) * 20, data?.totalElements || filteredSubscriptions.length)} of {data?.totalElements || filteredSubscriptions.length} results</span>
                         <div className="flex gap-2">
-                            <button className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50">Previous</button>
-                            <button className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800">Next</button>
+                            <button 
+                                onClick={() => setPage(p => Math.max(0, p - 1))}
+                                disabled={page === 0}
+                                className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Previous
+                            </button>
+                            <button 
+                                onClick={() => setPage(p => p + 1)}
+                                disabled={!data || (page + 1) * 20 >= (data.totalElements || 0)}
+                                className="px-3 py-1 border border-slate-200 dark:border-slate-700 rounded-md text-sm text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                Next
+                            </button>
                         </div>
                     </div>
                 )}
             </div>
             </div>
+            <CreateSubscriptionDialog
+                isOpen={isCreateDialogOpen}
+                onClose={() => setIsCreateDialogOpen(false)}
+                onSuccess={() => {
+                    setIsCreateDialogOpen(false);
+                }}
+            />
         </div>
     );
 };

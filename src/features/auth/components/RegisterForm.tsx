@@ -44,7 +44,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ onSubmit, isLoading }) => 
                     <input
                         type="text"
                         placeholder="Jane Doe"
-                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-4 placeholder:text-slate-400 text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-4 placeholder:text-slate-400 text-base sm:text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm touch-manipulation"
                         {...register('fullName')}
                     />
                 </div>
@@ -62,7 +62,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ onSubmit, isLoading }) => 
                     <input
                         type="email"
                         placeholder="name@company.com"
-                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-4 placeholder:text-slate-400 text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-4 placeholder:text-slate-400 text-base sm:text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm touch-manipulation"
                         {...register('email')}
                     />
                 </div>
@@ -80,7 +80,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ onSubmit, isLoading }) => 
                     <input
                         type={showPassword ? "text" : "password"}
                         placeholder="••••••••"
-                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-10 placeholder:text-slate-400 text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-10 placeholder:text-slate-400 text-base sm:text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm touch-manipulation"
                         {...register('password')}
                     />
                     <button
@@ -107,7 +107,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ onSubmit, isLoading }) => 
                     <input
                         type="password"
                         placeholder="••••••••"
-                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-4 placeholder:text-slate-400 text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                        className="flex w-full min-w-0 resize-none overflow-hidden rounded-lg text-[#111418] dark:text-white border border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 h-11 pl-10 pr-4 placeholder:text-slate-400 text-base sm:text-sm font-normal leading-normal focus:outline-0 focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm touch-manipulation"
                         {...register('confirmPassword')}
                     />
                 </div>
@@ -117,7 +117,7 @@ export const RegisterForm: FC<RegisterFormProps> = ({ onSubmit, isLoading }) => 
             <button
                 type="submit"
                 disabled={isLoading}
-                className="mt-2 flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+                className="mt-2 flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-11 px-4 bg-primary hover:bg-blue-600 text-white text-sm font-bold leading-normal tracking-[0.015em] shadow-md hover:shadow-lg transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed touch-manipulation min-h-[44px]"
             >
                 <span className="truncate">{isLoading ? 'Creating Account...' : 'Create FluxPay Account'}</span>
                 {!isLoading && <span className="material-symbols-outlined text-lg ml-2">arrow_forward</span>}

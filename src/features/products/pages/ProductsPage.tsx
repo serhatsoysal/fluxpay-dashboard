@@ -1,14 +1,16 @@
 import { FC, useState, useEffect, useRef, useMemo } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate, Link } from 'react-router-dom';
 import { useProducts, useDeleteProduct } from '../api/productsQueries';
 import { Product } from '../types/product.types';
 import { CreateProductDialog } from '../components/CreateProductDialog';
 import { EditProductDialog } from '../components/EditProductDialog';
 import { ConfirmationDialog } from '@/shared/components/ui/ConfirmationDialog';
+import { ROUTES } from '@/shared/constants/routes';
 import { cn } from '@/shared/utils/cn';
 
 export const ProductsPage: FC = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [statusFilter, setStatusFilter] = useState<string>('All');
     const [typeFilter, setTypeFilter] = useState<string>('Any');
@@ -412,14 +414,21 @@ export const ProductsPage: FC = () => {
                             ) : products.length === 0 ? (
                                 <tr><td colSpan={5} className="p-6 text-center text-slate-500">No products found</td></tr>
                             ) : products.map((product) => (
-                                <tr key={product.id} className={cn("group hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors", product.status === 'archived' && 'opacity-60')}>
+                                <tr 
+                                    key={product.id} 
+                                    className={cn("group hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer", product.status === 'archived' && 'opacity-60')}
+                                    onClick={(e) => {
+                                        if ((e.target as HTMLElement).closest('button, .product-action-menu')) return;
+                                        navigate(ROUTES.PRODUCT_DETAIL.replace(':id', product.id));
+                                    }}
+                                >
                                     <td className="px-6 py-4">
                                         <div className="flex items-start gap-4">
                                             <div className={cn("size-10 rounded-lg flex items-center justify-center shrink-0 border", getIconColor(product.icon || 'inventory_2'))}>
                                                 <span className="material-symbols-outlined">{product.icon || 'inventory_2'}</span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors cursor-pointer">
+                                                <span className="font-semibold text-slate-900 dark:text-white group-hover:text-primary transition-colors">
                                                     {product.name || 'Unnamed Product'}
                                                 </span>
                                                 <div className="flex items-center gap-2 mt-1">

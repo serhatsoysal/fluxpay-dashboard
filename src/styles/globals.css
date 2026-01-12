@@ -98,3 +98,13 @@
 .dark ::-webkit-scrollbar-thumb {
   background: #334155;
 }
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
