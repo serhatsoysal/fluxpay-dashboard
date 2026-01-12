@@ -9,6 +9,7 @@ interface AuthStore {
     user: User | null;
     tenantId: string | null;
     isAuthenticated: boolean;
+    isInitialized: boolean;
     hasAccessToken: () => boolean;
     login: (credentials: { email: string; password: string }) => Promise<void>;
     register: (credentials: RegisterCredentials) => Promise<void>;
@@ -80,6 +81,7 @@ export const useAuthStore = create<AuthStore>((set) => {
         user: initialState.user,
         tenantId: initialState.tenantId,
         isAuthenticated: initialState.isAuthenticated,
+        isInitialized: false,
 
         hasAccessToken: () => {
             return !!tokenManager.getToken();
@@ -203,7 +205,7 @@ export const useAuthStore = create<AuthStore>((set) => {
 
         initialize: async () => {
             const state = initializeAuth();
-            set(state);
+            set({ ...state, isInitialized: false });
             
             if (state.isAuthenticated && !tokenManager.getToken()) {
                 const refreshToken = tokenManager.getRefreshToken();
@@ -216,10 +218,13 @@ export const useAuthStore = create<AuthStore>((set) => {
                     } catch (error) {
                         tokenManager.clearToken();
                         localStorage.removeItem('userEmail');
-                        set({ user: null, tenantId: null, isAuthenticated: false });
+                        set({ user: null, tenantId: null, isAuthenticated: false, isInitialized: true });
+                        return;
                     }
                 }
             }
+            
+            set({ isInitialized: true });
         },
     };
 });

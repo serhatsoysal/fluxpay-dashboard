@@ -129,8 +129,8 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen = false, onClose }) => {
     return (
         <>
             <div className={cn(
-                "fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-sidebar-bg text-slate-300 border-r border-slate-800/50 flex flex-col transition-transform duration-300 ease-in-out shadow-xl lg:shadow-none",
-                isOpen ? "translate-x-0" : "-translate-x-full"
+                "fixed inset-y-0 left-0 z-50 w-64 sm:w-72 bg-sidebar-bg text-slate-300 border-r border-slate-800/50 flex flex-col transition-all duration-300 ease-in-out shadow-xl lg:shadow-none lg:relative",
+                isOpen ? "translate-x-0 lg:translate-x-0" : "-translate-x-full lg:-translate-x-full lg:w-0 lg:border-r-0 lg:overflow-hidden"
             )}>
             <div className="h-14 sm:h-16 flex items-center px-4 sm:px-6 border-b border-slate-800/50">
                 <img 
@@ -149,7 +149,6 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen = false, onClose }) => {
                         <Link
                             key={item.name}
                             to={item.href}
-                            onClick={() => onClose?.()}
                             className={cn(
                                 'flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium group min-h-[44px] touch-manipulation',
                                 isActive
@@ -180,7 +179,6 @@ export const Sidebar: FC<SidebarProps> = ({ isOpen = false, onClose }) => {
                         <Link
                             key={item.name}
                             to={item.href}
-                            onClick={() => onClose?.()}
                             className={cn(
                                 'flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-2 rounded-lg transition-colors text-xs sm:text-sm font-medium group min-h-[44px] touch-manipulation',
                                 isActive
