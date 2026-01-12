@@ -2,6 +2,27 @@ import { FC, useState } from 'react';
 import { cn } from '@/shared/utils/cn';
 import { toast } from '@/shared/components/ui/use-toast';
 
+const generateSecureApiKey = (): string => {
+    const prefix = 'pk_live_';
+    const alphabet = '0123456789abcdefghijklmnopqrstuvwxyz';
+    const length = 26;
+
+    if (typeof window !== 'undefined' && window.crypto && window.crypto.getRandomValues) {
+        const randomBytes = new Uint8Array(length);
+        window.crypto.getRandomValues(randomBytes);
+
+        let suffix = '';
+        for (let i = 0; i < length; i++) {
+            const index = randomBytes[i] % alphabet.length;
+            suffix += alphabet.charAt(index);
+        }
+
+        return `${prefix}${suffix}`;
+    }
+
+    throw new Error('Secure random number generator is not available in this environment.');
+};
+
 export const SettingsPage: FC = () => {
     const [activeTab, setActiveTab] = useState<string>('general');
     const [generalSettings, setGeneralSettings] = useState({
@@ -303,7 +324,7 @@ export const SettingsPage: FC = () => {
                                                     </button>
                                                     <button 
                                                         onClick={() => {
-                                                            const newKey = `pk_live_${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+                                                            const newKey = generateSecureApiKey();
                                                             setApiKey(newKey);
                                                             toast({
                                                                 title: 'API Key Refreshed',
