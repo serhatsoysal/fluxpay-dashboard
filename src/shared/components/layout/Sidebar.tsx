@@ -23,7 +23,7 @@ interface SidebarProps {
     onClose?: () => void;
 }
 
-export const Sidebar: FC<SidebarProps> = ({ isOpen = false, onClose }) => {
+export const Sidebar: FC<SidebarProps> = ({ isOpen = false }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const { user, logout, logoutAll } = useAuthStore();

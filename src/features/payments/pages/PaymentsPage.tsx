@@ -1,8 +1,7 @@
 import { FC, useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { useDebounce } from '@/shared/hooks/useDebounce';
 import { usePayments, usePaymentStats } from '../api/paymentsQueries';
-import { PaymentStatus, PaymentMethod } from '../types/payment.types';
+import { PaymentStatus } from '../types/payment.types';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
 import { formatDate } from '@/shared/utils/dateHelpers';
 import { cn } from '@/shared/utils/cn';
@@ -27,7 +26,7 @@ export const PaymentsPage: FC = () => {
         size: 20,
         status: activeFilter === 'All'
             ? undefined
-            : (activeFilter.toUpperCase().replaceAll(' ', '_') as PaymentStatus),
+            : (activeFilter.toUpperCase().replace(/ /g, '_') as PaymentStatus),
     }), [activeFilter, page]);
 
     const { data, isLoading } = usePayments(filters);
@@ -222,66 +221,66 @@ export const PaymentsPage: FC = () => {
                                         <tr>
                                             <td colSpan={8} className="px-6 py-12 text-center text-slate-500">Loading payments...</td>
                                         </tr>
+                                    ) : payments.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 text-4xl">payments</span>
+                                                    <p>No payments found</p>
+                                                </div>
+                                            </td>
+                                        </tr>
                                     ) : (
-                                        payments.length === 0 ? (
-                                            <tr>
-                                                <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
-                                                    <div className="flex flex-col items-center gap-2">
-                                                        <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 text-4xl">payments</span>
-                                                        <p>No payments found</p>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        ) : (
-                                    ) : payments.map((payment: any) => {
-                                        const customerName = payment.customerName || payment.customerEmail || 'Unknown';
-                                        const customerInitials = getCustomerInitials(customerName, payment.customerEmail || '');
-                                        return (
-                                            <tr key={payment.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group cursor-pointer" onClick={() => navigate(ROUTES.PAYMENT_DETAIL.replace(':id', payment.id))}>
-                                                <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
-                                                    <input type="checkbox" className="rounded border-slate-300 text-primary focus:ring-primary bg-white dark:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity checked:opacity-100" />
-                                                </td>
-                                                <td className="px-6 py-4 font-mono text-slate-900 dark:text-white text-xs">
-                                                    {payment.transactionId || payment.id.substring(0, 8)}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center gap-2">
-                                                        {customerInitials && (
-                                                            <div className={cn("size-5 rounded-full flex items-center justify-center text-[10px] font-bold", getAvatarColor(customerInitials))}>
-                                                                {customerInitials}
-                                                            </div>
-                                                        )}
-                                                        <span className="text-slate-900 dark:text-white">{customerName}</span>
-                                                    </div>
-                                                </td>
-                                                <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">
-                                                    {formatCurrency(payment.amount || 0, payment.currency || 'USD')}
-                                                </td>
-                                                <td className="px-6 py-4">
-                                                    <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border', getPaymentStatusStyle(payment.status))}>
-                                                        <span className={cn('size-1.5 rounded-full', getPaymentStatusDot(payment.status))}></span>
-                                                        {payment.status?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
-                                                    </span>
-                                                </td>
-                                                <td className="px-6 py-4 text-slate-500">
-                                                    {payment.paymentMethod?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
-                                                </td>
-                                                <td className="px-6 py-4 text-slate-500">
-                                                    {payment.paidAt ? formatDate(payment.paidAt) : '-'}
-                                                </td>
-                                                <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
-                                                    <button 
-                                                        className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            navigate(ROUTES.PAYMENT_DETAIL.replace(':id', payment.id));
-                                                        }}
-                                                    >
-                                                        <span className="material-symbols-outlined text-[20px]">more_horiz</span>
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
+                                        payments.map((payment: any) => {
+                                            const customerName = payment.customerName || payment.customerEmail || 'Unknown';
+                                            const customerInitials = getCustomerInitials(customerName, payment.customerEmail || '');
+                                            return (
+                                                <tr key={payment.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group cursor-pointer" onClick={() => navigate(ROUTES.PAYMENT_DETAIL.replace(':id', payment.id))}>
+                                                    <td className="px-6 py-4" onClick={(e) => e.stopPropagation()}>
+                                                        <input type="checkbox" className="rounded border-slate-300 text-primary focus:ring-primary bg-white dark:bg-slate-800 opacity-0 group-hover:opacity-100 transition-opacity checked:opacity-100" />
+                                                    </td>
+                                                    <td className="px-6 py-4 font-mono text-slate-900 dark:text-white text-xs">
+                                                        {payment.transactionId || payment.id.substring(0, 8)}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <div className="flex items-center gap-2">
+                                                            {customerInitials && (
+                                                                <div className={cn("size-5 rounded-full flex items-center justify-center text-[10px] font-bold", getAvatarColor(customerInitials))}>
+                                                                    {customerInitials}
+                                                                </div>
+                                                            )}
+                                                            <span className="text-slate-900 dark:text-white">{customerName}</span>
+                                                        </div>
+                                                    </td>
+                                                    <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">
+                                                        {formatCurrency(payment.amount || 0, payment.currency || 'USD')}
+                                                    </td>
+                                                    <td className="px-6 py-4">
+                                                        <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border', getPaymentStatusStyle(payment.status))}>
+                                                            <span className={cn('size-1.5 rounded-full', getPaymentStatusDot(payment.status))}></span>
+                                                            {payment.status?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                                                        </span>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-slate-500">
+                                                        {payment.paymentMethod?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-slate-500">
+                                                        {payment.paidAt ? formatDate(payment.paidAt) : '-'}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-right" onClick={(e) => e.stopPropagation()}>
+                                                        <button 
+                                                            className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                navigate(ROUTES.PAYMENT_DETAIL.replace(':id', payment.id));
+                                                            }}
+                                                        >
+                                                            <span className="material-symbols-outlined text-[20px]">more_horiz</span>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
                                     )}
                                 </tbody>
                             </table>

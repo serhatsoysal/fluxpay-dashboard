@@ -122,7 +122,7 @@ export const PaymentDetailPage: FC = () => {
                                     <dd className="mt-1">
                                         <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border', getPaymentStatusStyle(payment.status || ''))}>
                                             <span className={cn('size-1.5 rounded-full mr-1.5', getPaymentStatusDot(payment.status || ''))}></span>
-                                            {payment.status?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
+                                            {payment.status?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
                                         </span>
                                     </dd>
                                 </div>
@@ -143,7 +143,7 @@ export const PaymentDetailPage: FC = () => {
                                 <div>
                                     <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">Payment Method</dt>
                                     <dd className="mt-1 text-sm text-slate-900 dark:text-white">
-                                        {payment.paymentMethod?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
+                                        {payment.paymentMethod?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
                                     </dd>
                                 </div>
                                 {payment.paymentIntentId && (

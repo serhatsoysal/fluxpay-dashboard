@@ -54,7 +54,7 @@ export const useCreateRefund = () => {
 
     return useMutation({
         mutationFn: ({ id, input }: { id: string; input: CreateRefundInput }) => paymentsApi.createRefund(id, input),
-        onSuccess: (data, variables) => {
+        onSuccess: (_data, variables) => {
             queryClient.invalidateQueries({ queryKey: [PAYMENTS_QUERY_KEY, variables.id] });
             queryClient.invalidateQueries({ queryKey: [PAYMENTS_QUERY_KEY] });
             queryClient.invalidateQueries({ queryKey: [PAYMENT_STATS_QUERY_KEY] });

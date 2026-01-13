@@ -104,7 +104,7 @@ export const useCreateInvoice = () => {
 
     return useMutation({
         mutationFn: (input: CreateInvoiceInput) => invoicesApi.create(input),
-        onSuccess: (data) => {
+        onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: [INVOICES_QUERY_KEY] });
             queryClient.invalidateQueries({ queryKey: [INVOICE_STATS_QUERY_KEY] });
         },

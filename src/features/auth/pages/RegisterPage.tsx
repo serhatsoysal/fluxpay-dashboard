@@ -12,6 +12,7 @@ import { TermsOfServiceContent } from '@/shared/components/legal/TermsOfServiceC
 export const RegisterPage: FC = () => {
     const navigate = useNavigate();
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const logout = useAuthStore((state) => state.logout);
     const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
