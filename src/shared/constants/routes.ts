@@ -11,6 +11,7 @@ export const ROUTES = {
     INVOICES: '/invoices',
     INVOICE_DETAIL: '/invoices/:id',
     PAYMENTS: '/payments',
+    PAYMENT_DETAIL: '/payments/:id',
     PRODUCTS: '/products',
     PRODUCT_DETAIL: '/products/:id',
     WEBHOOKS: '/webhooks',

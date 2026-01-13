@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { useWebhooks, useDeleteWebhook } from '../api/webhooksQueries';
 import { CreateWebhookDialog } from '../components/CreateWebhookDialog';
+import { EditWebhookDialog } from '../components/EditWebhookDialog';
 import { ConfirmationDialog } from '@/shared/components/ui/ConfirmationDialog';
 import { Webhook } from '../types/webhook.types';
 import { formatDate } from '@/shared/utils/dateHelpers';
@@ -9,6 +10,7 @@ import { toast } from '@/shared/components/ui/use-toast';
 
 export const WebhooksPage: FC = () => {
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [selectedWebhook, setSelectedWebhook] = useState<Webhook | null>(null);
 
@@ -123,15 +125,27 @@ export const WebhooksPage: FC = () => {
                                                 {webhook.createdAt ? formatDate(webhook.createdAt) : '-'}
                                             </td>
                                             <td className="py-3 px-6 text-right">
-                                                <button
-                                                    onClick={() => {
-                                                        setSelectedWebhook(webhook);
-                                                        setIsDeleteDialogOpen(true);
-                                                    }}
-                                                    className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm font-medium transition-colors"
-                                                >
-                                                    Delete
-                                                </button>
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedWebhook(webhook);
+                                                            setIsEditDialogOpen(true);
+                                                        }}
+                                                        className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
+                                                        title="Edit webhook"
+                                                    >
+                                                        <span className="material-symbols-outlined text-[20px]">edit</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            setSelectedWebhook(webhook);
+                                                            setIsDeleteDialogOpen(true);
+                                                        }}
+                                                        className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 text-sm font-medium transition-colors"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </td>
                                         </tr>
                                     ))}
@@ -146,6 +160,21 @@ export const WebhooksPage: FC = () => {
                     onClose={() => setIsCreateDialogOpen(false)}
                     onSuccess={() => {}}
                 />
+
+                {selectedWebhook && (
+                    <EditWebhookDialog
+                        isOpen={isEditDialogOpen}
+                        onClose={() => {
+                            setIsEditDialogOpen(false);
+                            setSelectedWebhook(null);
+                        }}
+                        onSuccess={() => {
+                            setIsEditDialogOpen(false);
+                            setSelectedWebhook(null);
+                        }}
+                        webhook={selectedWebhook}
+                    />
+                )}
 
                 <ConfirmationDialog
                     isOpen={isDeleteDialogOpen}

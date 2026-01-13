@@ -204,27 +204,35 @@ export const useAuthStore = create<AuthStore>((set) => {
         },
 
         initialize: async () => {
-            const state = initializeAuth();
-            set({ ...state, isInitialized: false });
+            set({ isInitialized: false });
             
-            if (state.isAuthenticated && !tokenManager.getToken()) {
-                const refreshToken = tokenManager.getRefreshToken();
-                if (refreshToken) {
+            const refreshToken = tokenManager.getRefreshToken();
+            const token = tokenManager.getToken();
+            
+            if (refreshToken) {
+                if (!token) {
                     try {
                         const response = await authApi.refreshToken({ refreshToken });
                         tokenManager.setToken(response.token);
                         tokenManager.setRefreshToken(response.refreshToken);
                         tokenManager.setSessionId(response.sessionId);
+                        
+                        const state = initializeAuth();
+                        set({ ...state, isInitialized: true });
                     } catch (error) {
                         tokenManager.clearToken();
                         localStorage.removeItem('userEmail');
                         set({ user: null, tenantId: null, isAuthenticated: false, isInitialized: true });
-                        return;
                     }
+                } else {
+                    const state = initializeAuth();
+                    set({ ...state, isInitialized: true });
                 }
+            } else {
+                tokenManager.clearToken();
+                localStorage.removeItem('userEmail');
+                set({ user: null, tenantId: null, isAuthenticated: false, isInitialized: true });
             }
-            
-            set({ isInitialized: true });
         },
     };
 });

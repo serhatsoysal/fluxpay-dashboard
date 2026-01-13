@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { invoicesApi } from './invoicesApi';
-import { InvoiceFilters } from '../types/invoice.types';
+import { InvoiceFilters, CreateInvoiceInput } from '../types/invoice.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 export const INVOICES_QUERY_KEY = 'invoices';
@@ -95,6 +95,18 @@ export const useVoidInvoice = () => {
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: [INVOICES_QUERY_KEY, data.id] });
             queryClient.invalidateQueries({ queryKey: [INVOICES_QUERY_KEY] });
+        },
+    });
+};
+
+export const useCreateInvoice = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (input: CreateInvoiceInput) => invoicesApi.create(input),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: [INVOICES_QUERY_KEY] });
+            queryClient.invalidateQueries({ queryKey: [INVOICE_STATS_QUERY_KEY] });
         },
     });
 };

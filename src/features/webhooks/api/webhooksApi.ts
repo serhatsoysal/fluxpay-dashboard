@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api/apiClient';
 import { API_ROUTES } from '@/shared/constants/apiEndpoints';
-import { Webhook, CreateWebhookInput } from '../types/webhook.types';
+import { Webhook, CreateWebhookInput, UpdateWebhookInput } from '../types/webhook.types';
 
 export const webhooksApi = {
     getAll: async (): Promise<Webhook[]> => {
@@ -15,6 +15,11 @@ export const webhooksApi = {
 
     create: async (input: CreateWebhookInput): Promise<Webhook> => {
         const response = await apiClient.post(API_ROUTES.WEBHOOKS.CREATE, input);
+        return response.data;
+    },
+
+    update: async (id: string, input: UpdateWebhookInput): Promise<Webhook> => {
+        const response = await apiClient.put(API_ROUTES.WEBHOOKS.UPDATE(id), input);
         return response.data;
     },
 
