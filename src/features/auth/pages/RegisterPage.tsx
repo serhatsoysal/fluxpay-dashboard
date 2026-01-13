@@ -43,6 +43,8 @@ export const RegisterPage: FC = () => {
                 adminLastName: lastName,
             });
 
+            await logout();
+
             toast({
                 title: 'Account Created Successfully',
                 description: 'Your account has been created. Please sign in to continue.',
