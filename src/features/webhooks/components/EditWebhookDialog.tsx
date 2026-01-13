@@ -56,7 +56,7 @@ export const EditWebhookDialog: FC<EditWebhookDialogProps> = ({
         
         if (!formData.url?.trim()) {
             newErrors.url = 'URL is required';
-        } else if (formData.url && !formData.url.startsWith('https://')) {
+        } else if (!formData.url?.startsWith('https://')) {
             newErrors.url = 'URL must start with https://';
         }
         
@@ -106,10 +106,17 @@ export const EditWebhookDialog: FC<EditWebhookDialogProps> = ({
 
     return createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div
+            <button
+                type="button"
                 className="absolute inset-0 bg-slate-900/40 dark:bg-black/60 backdrop-blur-[2px] transition-opacity"
                 onClick={onClose}
-            ></div>
+                onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                        onClose();
+                    }
+                }}
+                aria-label="Close dialog"
+            ></button>
 
             <div className="relative w-full max-w-[600px] bg-white dark:bg-slate-900 rounded-lg shadow-modal border border-slate-100 dark:border-slate-800 transform transition-all scale-100 opacity-100 flex flex-col overflow-hidden max-h-[90vh]">
                 <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
@@ -125,10 +132,11 @@ export const EditWebhookDialog: FC<EditWebhookDialogProps> = ({
                 <form onSubmit={handleSubmit} className="flex flex-col overflow-y-auto">
                     <div className="p-6 space-y-5">
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label htmlFor="webhook-url" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                 Webhook URL
                             </label>
                             <input
+                                id="webhook-url"
                                 type="url"
                                 value={formData.url || ''}
                                 onChange={(e) => setFormData({ ...formData, url: e.target.value })}
@@ -141,10 +149,10 @@ export const EditWebhookDialog: FC<EditWebhookDialogProps> = ({
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label htmlFor="webhook-events" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                 Enabled Events
                             </label>
-                            <div className="border border-slate-300 dark:border-slate-600 rounded-lg p-3 max-h-48 overflow-y-auto">
+                            <div id="webhook-events" className="border border-slate-300 dark:border-slate-600 rounded-lg p-3 max-h-48 overflow-y-auto" role="group" aria-labelledby="webhook-events-label">
                                 <div className="space-y-2">
                                     {WEBHOOK_EVENTS.map((event) => (
                                         <label key={event} className="flex items-center gap-2 cursor-pointer">
@@ -165,10 +173,11 @@ export const EditWebhookDialog: FC<EditWebhookDialogProps> = ({
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                            <label htmlFor="webhook-secret" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                                 Secret (optional)
                             </label>
                             <input
+                                id="webhook-secret"
                                 type="text"
                                 value={formData.secret || ''}
                                 onChange={(e) => setFormData({ ...formData, secret: e.target.value })}

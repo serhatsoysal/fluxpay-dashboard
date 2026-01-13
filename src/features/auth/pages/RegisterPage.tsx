@@ -30,7 +30,10 @@ export const RegisterPage: FC = () => {
             const emailDomain = emailParts[1] || 'company';
             const domainName = emailDomain.split('.')[0].toLowerCase();
             
-            const slug = `${emailLocal}-${domainName}`.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+            const slug = `${emailLocal}-${domainName}`.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^(-|$)/g, '');
             const tenantName = domainName.charAt(0).toUpperCase() + domainName.slice(1) + ' Corporation';
 
             await authApi.register({

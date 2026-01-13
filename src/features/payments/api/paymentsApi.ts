@@ -9,9 +9,9 @@ const cleanParams = (params: Record<string, any>): Record<string, any> => {
         const value = params[key];
         if (value !== undefined && value !== null && value !== '') {
             if (key === 'status' && typeof value === 'string') {
-                cleaned[key] = value.toUpperCase().replace(/ /g, '_');
+                cleaned[key] = value.toUpperCase().replaceAll(' ', '_');
             } else if (key === 'paymentMethod' && typeof value === 'string') {
-                cleaned[key] = value.toUpperCase().replace(/ /g, '_');
+                cleaned[key] = value.toUpperCase().replaceAll(' ', '_');
             } else {
                 cleaned[key] = value;
             }

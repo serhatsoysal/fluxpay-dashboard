@@ -210,7 +210,7 @@ export const useAuthStore = create<AuthStore>((set) => {
             const token = tokenManager.getToken();
             
             if (refreshToken) {
-                if (!token) {
+                if (token === null || token === '') {
                     try {
                         const response = await authApi.refreshToken({ refreshToken });
                         tokenManager.setToken(response.token);

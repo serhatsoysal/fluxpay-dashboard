@@ -1,17 +1,14 @@
 import { FC, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { usePayment } from '../api/paymentsQueries';
 import { CreateRefundDialog } from '../components/CreateRefundDialog';
-import { ConfirmationDialog } from '@/shared/components/ui/ConfirmationDialog';
 import { ROUTES } from '@/shared/constants/routes';
 import { formatCurrency } from '@/features/subscriptions/utils/subscriptionHelpers';
-import { formatDate, formatDateTime } from '@/shared/utils/dateHelpers';
+import { formatDateTime } from '@/shared/utils/dateHelpers';
 import { cn } from '@/shared/utils/cn';
-import { toast } from '@/shared/components/ui/use-toast';
 
 export const PaymentDetailPage: FC = () => {
     const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
     const { data: payment, isLoading, error } = usePayment(id || '');
     const [isRefundDialogOpen, setIsRefundDialogOpen] = useState(false);
 
@@ -109,7 +106,7 @@ export const PaymentDetailPage: FC = () => {
                                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary hover:bg-primary-dark text-white text-sm font-semibold transition-colors min-h-[44px]"
                             >
                                 <span className="material-symbols-outlined text-[18px]">undo</span>
-                                Refund
+                                {' '}Refund
                             </button>
                         )}
                     </div>
@@ -125,7 +122,7 @@ export const PaymentDetailPage: FC = () => {
                                     <dd className="mt-1">
                                         <span className={cn('inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border', getPaymentStatusStyle(payment.status || ''))}>
                                             <span className={cn('size-1.5 rounded-full mr-1.5', getPaymentStatusDot(payment.status || ''))}></span>
-                                            {payment.status?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
+                                            {payment.status?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
                                         </span>
                                     </dd>
                                 </div>
@@ -146,7 +143,7 @@ export const PaymentDetailPage: FC = () => {
                                 <div>
                                     <dt className="text-sm font-medium text-slate-500 dark:text-slate-400">Payment Method</dt>
                                     <dd className="mt-1 text-sm text-slate-900 dark:text-white">
-                                        {payment.paymentMethod?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
+                                        {payment.paymentMethod?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
                                     </dd>
                                 </div>
                                 {payment.paymentIntentId && (

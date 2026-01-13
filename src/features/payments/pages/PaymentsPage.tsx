@@ -12,10 +12,8 @@ export const PaymentsPage: FC = () => {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const [activeFilter, setActiveFilter] = useState<string>('All');
-    const [paymentMethodFilter, setPaymentMethodFilter] = useState<string>('All');
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [page, setPage] = useState(0);
-    const debouncedSearch = useDebounce(searchQuery, 300);
 
     useEffect(() => {
         const urlSearch = searchParams.get('search');
@@ -27,13 +25,10 @@ export const PaymentsPage: FC = () => {
     const filters = useMemo(() => ({
         page: page,
         size: 20,
-        status: activeFilter !== 'All'
-            ? activeFilter.toUpperCase().replace(/ /g, '_') as PaymentStatus
-            : undefined,
-        paymentMethod: paymentMethodFilter !== 'All'
-            ? paymentMethodFilter.toUpperCase().replace(/ /g, '_') as PaymentMethod
-            : undefined,
-    }), [activeFilter, paymentMethodFilter, page]);
+        status: activeFilter === 'All'
+            ? undefined
+            : (activeFilter.toUpperCase().replaceAll(' ', '_') as PaymentStatus),
+    }), [activeFilter, page]);
 
     const { data, isLoading } = usePayments(filters);
     const { data: stats } = usePaymentStats();
@@ -80,7 +75,7 @@ export const PaymentsPage: FC = () => {
             'bg-cyan-100 text-cyan-600',
             'bg-yellow-100 text-yellow-600'
         ];
-        const index = initial.charCodeAt(0) % colors.length;
+        const index = (initial.codePointAt(0) ?? 0) % colors.length;
         return colors[index];
     };
 
@@ -133,12 +128,12 @@ export const PaymentsPage: FC = () => {
                                 link.style.visibility = 'hidden';
                                 document.body.appendChild(link);
                                 link.click();
-                                document.body.removeChild(link);
+                                link.remove();
                             }}
                             className="flex items-center justify-center gap-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm min-w-[160px]"
                         >
                             <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>download</span>
-                            Export
+                            {' '}Export
                         </button>
                     </div>
                 </header>
@@ -227,15 +222,17 @@ export const PaymentsPage: FC = () => {
                                         <tr>
                                             <td colSpan={8} className="px-6 py-12 text-center text-slate-500">Loading payments...</td>
                                         </tr>
-                                    ) : payments.length === 0 ? (
-                                        <tr>
-                                            <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
-                                                <div className="flex flex-col items-center gap-2">
-                                                    <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 text-4xl">payments</span>
-                                                    <p>No payments found</p>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                    ) : (
+                                        payments.length === 0 ? (
+                                            <tr>
+                                                <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
+                                                    <div className="flex flex-col items-center gap-2">
+                                                        <span className="material-symbols-outlined text-slate-300 dark:text-slate-600 text-4xl">payments</span>
+                                                        <p>No payments found</p>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ) : (
                                     ) : payments.map((payment: any) => {
                                         const customerName = payment.customerName || payment.customerEmail || 'Unknown';
                                         const customerInitials = getCustomerInitials(customerName, payment.customerEmail || '');
@@ -263,11 +260,11 @@ export const PaymentsPage: FC = () => {
                                                 <td className="px-6 py-4">
                                                     <span className={cn('inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border', getPaymentStatusStyle(payment.status))}>
                                                         <span className={cn('size-1.5 rounded-full', getPaymentStatusDot(payment.status))}></span>
-                                                        {payment.status?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
+                                                        {payment.status?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase())}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 text-slate-500">
-                                                    {payment.paymentMethod?.replace(/_/g, ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
+                                                    {payment.paymentMethod?.replaceAll('_', ' ').replace(/\b\w/g, (l: string) => l.toUpperCase()) || '-'}
                                                 </td>
                                                 <td className="px-6 py-4 text-slate-500">
                                                     {payment.paidAt ? formatDate(payment.paidAt) : '-'}
@@ -284,8 +281,8 @@ export const PaymentsPage: FC = () => {
                                                     </button>
                                                 </td>
                                             </tr>
-                                        );
-                                    })}
+                                        ))
+                                    )}
                                 </tbody>
                             </table>
                         </div>
