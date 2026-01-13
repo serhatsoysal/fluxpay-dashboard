@@ -3,6 +3,7 @@ import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { RegisterForm } from '../components/RegisterForm';
 import { ROUTES } from '@/shared/constants/routes';
 import { useAuthStore } from '../store/authStore';
+import { authApi } from '../api/authApi';
 import { toast } from '@/shared/components/ui/use-toast';
 import { LegalModal } from '@/shared/components/legal/LegalModal';
 import { PrivacyPolicyContent } from '@/shared/components/legal/PrivacyPolicyContent';
@@ -10,9 +11,8 @@ import { TermsOfServiceContent } from '@/shared/components/legal/TermsOfServiceC
 
 export const RegisterPage: FC = () => {
     const navigate = useNavigate();
-    const register = useAuthStore((state) => state.register);
-    const logout = useAuthStore((state) => state.logout);
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+    const logout = useAuthStore((state) => state.logout);
     const [isPrivacyModalOpen, setIsPrivacyModalOpen] = useState(false);
     const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
 
@@ -26,11 +26,19 @@ export const RegisterPage: FC = () => {
             const firstName = nameParts[0] || '';
             const lastName = nameParts.slice(1).join(' ') || '';
             
-            const emailDomain = data.email.split('@')[1] || 'company';
-            const slug = emailDomain.split('.')[0].toLowerCase().replace(/[^a-z0-9-]/g, '-');
+            const emailParts = data.email.split('@');
+            const emailLocal = emailParts[0] || 'user';
+            const emailDomain = emailParts[1] || 'company';
+            const domainName = emailDomain.split('.')[0].toLowerCase();
+            
+            const slug = `${emailLocal}-${domainName}`.toLowerCase()
+                .replace(/[^a-z0-9-]/g, '-')
+                .replace(/-+/g, '-')
+                .replace(/^(-|$)/g, '');
+            const tenantName = domainName.charAt(0).toUpperCase() + domainName.slice(1) + ' Corporation';
 
-            await register({
-                name: emailDomain.split('.')[0].charAt(0).toUpperCase() + emailDomain.split('.')[0].slice(1) + ' Corporation',
+            await authApi.register({
+                name: tenantName,
                 slug: slug,
                 billingEmail: data.email,
                 adminEmail: data.email,
@@ -42,15 +50,16 @@ export const RegisterPage: FC = () => {
             await logout();
 
             toast({
-                title: 'Account Created',
-                description: 'Please sign in to continue.',
+                title: 'Account Created Successfully',
+                description: 'Your account has been created. Please sign in to continue.',
             });
+
             navigate(ROUTES.LOGIN);
         } catch (error: any) {
             toast({
                 variant: 'destructive',
-                title: 'Error',
-                description: error.response?.data?.message || error.message || 'Failed to create account',
+                title: 'Registration Failed',
+                description: error.response?.data?.message || error.message || 'Failed to create account. Please try again.',
             });
         }
     };

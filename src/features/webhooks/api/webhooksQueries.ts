@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { webhooksApi } from './webhooksApi';
-import { CreateWebhookInput } from '../types/webhook.types';
+import { CreateWebhookInput, UpdateWebhookInput } from '../types/webhook.types';
 import { useAuthStore } from '@/features/auth/store/authStore';
 
 export const WEBHOOKS_QUERY_KEY = 'webhooks';
@@ -39,6 +39,18 @@ export const useCreateWebhook = () => {
     return useMutation({
         mutationFn: (input: CreateWebhookInput) => webhooksApi.create(input),
         onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [WEBHOOKS_QUERY_KEY] });
+        },
+    });
+};
+
+export const useUpdateWebhook = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({ id, input }: { id: string; input: UpdateWebhookInput }) => webhooksApi.update(id, input),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: [WEBHOOKS_QUERY_KEY, data.id] });
             queryClient.invalidateQueries({ queryKey: [WEBHOOKS_QUERY_KEY] });
         },
     });

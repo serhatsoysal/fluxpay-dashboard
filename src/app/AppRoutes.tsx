@@ -14,6 +14,8 @@ import { CustomersPage } from '@/features/customers/pages/CustomersPage';
 import { CustomerDetailPage } from '@/features/customers/pages/CustomerDetailPage';
 import { InvoicesPage } from '@/features/invoices/pages/InvoicesPage';
 import { InvoiceDetailPage } from '@/features/invoices/pages/InvoiceDetailPage';
+import { PaymentsPage } from '@/features/payments/pages/PaymentsPage';
+import { PaymentDetailPage } from '@/features/payments/pages/PaymentDetailPage';
 import { ProductsPage } from '@/features/products/pages/ProductsPage';
 import { ProductDetailPage } from '@/features/products/pages/ProductDetailPage';
 import { WebhooksPage } from '@/features/webhooks/pages/WebhooksPage';
@@ -67,7 +69,8 @@ export const AppRoutes: FC = () => {
                     <Route path={ROUTES.CUSTOMER_DETAIL} element={<CustomerDetailPage />} />
                     <Route path={ROUTES.INVOICES} element={<InvoicesPage />} />
                     <Route path={ROUTES.INVOICE_DETAIL} element={<InvoiceDetailPage />} />
-                    <Route path={ROUTES.PAYMENTS} element={<div>Payments Page</div>} />
+                    <Route path={ROUTES.PAYMENTS} element={<PaymentsPage />} />
+                    <Route path={ROUTES.PAYMENT_DETAIL} element={<PaymentDetailPage />} />
                     <Route path={ROUTES.PRODUCTS} element={<ProductsPage />} />
                     <Route path={ROUTES.PRODUCT_DETAIL} element={<ProductDetailPage />} />
                     <Route path={ROUTES.WEBHOOKS} element={<WebhooksPage />} />

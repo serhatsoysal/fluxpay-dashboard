@@ -32,6 +32,7 @@ export const API_ROUTES = {
     },
     INVOICES: {
         LIST: '/invoices',
+        CREATE: '/invoices',
         GET: (id: string) => `/invoices/${id}`,
         ITEMS: (id: string) => `/invoices/${id}/items`,
         CUSTOMER: (customerId: string) => `/invoices/customer/${customerId}`,
@@ -52,6 +53,13 @@ export const API_ROUTES = {
         LIST: '/webhooks',
         GET: (id: string) => `/webhooks/${id}`,
         CREATE: '/webhooks',
+        UPDATE: (id: string) => `/webhooks/${id}`,
         DELETE: (id: string) => `/webhooks/${id}`,
+    },
+    PAYMENTS: {
+        LIST: '/payments',
+        GET: (id: string) => `/payments/${id}`,
+        STATS: '/payments/stats',
+        REFUND: (id: string) => `/payments/${id}/refund`,
     },
 };

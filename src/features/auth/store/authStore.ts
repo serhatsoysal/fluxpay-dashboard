@@ -9,6 +9,7 @@ interface AuthStore {
     user: User | null;
     tenantId: string | null;
     isAuthenticated: boolean;
+    isInitialized: boolean;
     hasAccessToken: () => boolean;
     login: (credentials: { email: string; password: string }) => Promise<void>;
     register: (credentials: RegisterCredentials) => Promise<void>;
@@ -80,6 +81,7 @@ export const useAuthStore = create<AuthStore>((set) => {
         user: initialState.user,
         tenantId: initialState.tenantId,
         isAuthenticated: initialState.isAuthenticated,
+        isInitialized: false,
 
         hasAccessToken: () => {
             return !!tokenManager.getToken();
@@ -202,23 +204,34 @@ export const useAuthStore = create<AuthStore>((set) => {
         },
 
         initialize: async () => {
-            const state = initializeAuth();
-            set(state);
+            set({ isInitialized: false });
             
-            if (state.isAuthenticated && !tokenManager.getToken()) {
-                const refreshToken = tokenManager.getRefreshToken();
-                if (refreshToken) {
+            const refreshToken = tokenManager.getRefreshToken();
+            const token = tokenManager.getToken();
+            
+            if (refreshToken) {
+                if (token === null || token === '') {
                     try {
                         const response = await authApi.refreshToken({ refreshToken });
                         tokenManager.setToken(response.token);
                         tokenManager.setRefreshToken(response.refreshToken);
                         tokenManager.setSessionId(response.sessionId);
+                        
+                        const state = initializeAuth();
+                        set({ ...state, isInitialized: true });
                     } catch (error) {
                         tokenManager.clearToken();
                         localStorage.removeItem('userEmail');
-                        set({ user: null, tenantId: null, isAuthenticated: false });
+                        set({ user: null, tenantId: null, isAuthenticated: false, isInitialized: true });
                     }
+                } else {
+                    const state = initializeAuth();
+                    set({ ...state, isInitialized: true });
                 }
+            } else {
+                tokenManager.clearToken();
+                localStorage.removeItem('userEmail');
+                set({ user: null, tenantId: null, isAuthenticated: false, isInitialized: true });
             }
         },
     };

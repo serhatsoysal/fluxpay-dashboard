@@ -26,7 +26,7 @@ export const AppLayout: FC = () => {
             <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
             {isSidebarOpen && (
                 <div 
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden transition-opacity"
+                    className="fixed inset-0 bg-black/50 z-40 lg:bg-transparent lg:pointer-events-none transition-opacity"
                     onClick={closeSidebar}
                 />
             )}

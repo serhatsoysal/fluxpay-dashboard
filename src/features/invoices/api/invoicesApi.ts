@@ -1,6 +1,6 @@
 import { apiClient } from '@/shared/api/apiClient';
 import { API_ROUTES } from '@/shared/constants/apiEndpoints';
-import { Invoice, InvoiceItem, InvoiceFilters, InvoiceStats } from '../types/invoice.types';
+import { Invoice, InvoiceItem, InvoiceFilters, InvoiceStats, CreateInvoiceInput } from '../types/invoice.types';
 import { PaginatedResponse } from '@/shared/types/api.types';
 
 const cleanParams = (params: Record<string, any>): Record<string, any> => {
@@ -65,6 +65,11 @@ export const invoicesApi = {
 
     void: async (id: string): Promise<Invoice> => {
         const response = await apiClient.post(API_ROUTES.INVOICES.VOID(id));
+        return response.data;
+    },
+
+    create: async (input: CreateInvoiceInput): Promise<Invoice> => {
+        const response = await apiClient.post(API_ROUTES.INVOICES.CREATE, input);
         return response.data;
     },
 };

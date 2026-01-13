@@ -3,10 +3,18 @@ class TokenManager {
 
     setToken(token: string) {
         this.token = token;
+        localStorage.setItem('accessToken', token);
     }
 
     getToken(): string | null {
-        return this.token;
+        if (this.token) {
+            return this.token;
+        }
+        const storedToken = localStorage.getItem('accessToken');
+        if (storedToken) {
+            this.token = storedToken;
+        }
+        return storedToken;
     }
 
     setRefreshToken(refreshToken: string) {
@@ -44,6 +52,7 @@ class TokenManager {
 
     clearToken() {
         this.token = null;
+        localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('sessionId');
         localStorage.removeItem('userId');

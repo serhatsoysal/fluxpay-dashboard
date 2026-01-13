@@ -58,3 +58,22 @@ export interface InvoiceStats {
     overdueCount: number;
     overdueAmount: number;
 }
+
+export interface InvoiceItemInput {
+    priceId?: string;
+    description: string;
+    quantity: number;
+    unitAmount: number;
+    amount: number;
+    isProration?: boolean;
+}
+
+export interface CreateInvoiceInput {
+    customerId: string;
+    subscriptionId?: string;
+    invoiceDate: string;
+    dueDate: string;
+    currency: string;
+    items: InvoiceItemInput[];
+    metadata?: Record<string, any>;
+}
