@@ -171,6 +171,7 @@ export const useAuthStore = create<AuthStore>((set) => {
         logout: async () => {
             try {
                 await authApi.logout();
+            } catch {
             } finally {
                 tokenManager.clearToken();
                 localStorage.removeItem('userEmail');

@@ -10,10 +10,6 @@ export const authApi = {
 
     register: async (credentials: RegisterCredentials): Promise<any> => {
         const response = await apiClient.post(API_ROUTES.TENANTS.REGISTER, credentials);
-        if (response.status === 500 && 
-            response.data?.message?.includes('Invalid UUID string: register')) {
-            return response.data;
-        }
         return response.data;
     },
 
