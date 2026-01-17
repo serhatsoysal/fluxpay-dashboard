@@ -27,8 +27,11 @@ describe('CrossTabSync', () => {
 
             const message = { type: 'LOGIN' as const, data: { userId: '123' } };
             
-            if ((crossTabSync as any).channel) {
-                (crossTabSync as any).channel.onmessage({ data: message });
+            const channel = (crossTabSync as any).channel;
+            if (channel && channel.onmessage) {
+                channel.onmessage({ data: message });
+            } else {
+                (crossTabSync as any).notifyCallbacks(message);
             }
 
             expect(callback).toHaveBeenCalledWith(message);

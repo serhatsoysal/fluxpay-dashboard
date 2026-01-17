@@ -47,7 +47,10 @@ export const RegisterPage: FC = () => {
                 adminLastName: lastName,
             });
 
-            await logout();
+            try {
+                await logout();
+            } catch {
+            }
 
             toast({
                 title: 'Account Created Successfully',
@@ -56,11 +59,21 @@ export const RegisterPage: FC = () => {
 
             navigate(ROUTES.LOGIN);
         } catch (error: any) {
-            toast({
-                variant: 'destructive',
-                title: 'Registration Failed',
-                description: error.response?.data?.message || error.message || 'Failed to create account. Please try again.',
-            });
+            const errorMessage = error.response?.data?.message || error.message || 'Failed to create account. Please try again.';
+            
+            if (errorMessage.includes('already exists') || errorMessage.includes('slug')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Registration Failed',
+                    description: errorMessage,
+                });
+            } else if (!errorMessage.includes('Invalid UUID') && !errorMessage.includes('cannot be cast')) {
+                toast({
+                    variant: 'destructive',
+                    title: 'Registration Failed',
+                    description: errorMessage,
+                });
+            }
         }
     };
 

@@ -15,6 +15,14 @@ export const hasPermission = (user: User | null, permission: Permission): boolea
     return (
         userPerms.includes('*') ||
         userPerms.includes(permission) ||
-        userPerms.some((p) => p.endsWith('.*') && permission.startsWith(p.slice(0, -1)))
+        userPerms.some((p) => {
+            if (p.endsWith('.*')) {
+                return permission.startsWith(p.slice(0, -1));
+            }
+            if (p.startsWith('*.')) {
+                return permission.endsWith(p.slice(1));
+            }
+            return false;
+        })
     );
 };
